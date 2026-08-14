@@ -17,8 +17,8 @@
 
 A Rory Systems atua nas duas pontas da engenharia de software: mantém sistemas
 críticos que já sustentam a operação de clientes de indústria, finanças e
-varejo — legado em Delphi, .NET, SQL Server — e constrói os produtos que essa
-operação ainda não tem: SaaS, aplicações, integrações com IA e sites de
+varejo, com legado em Delphi, .NET e SQL Server, e constrói os produtos que
+essa operação ainda não tem: SaaS, aplicações, integrações com IA e sites de
 conversão.
 
 Sediada em Blumenau, SC. Atendimento remoto para todo o Brasil.
@@ -27,7 +27,7 @@ Sediada em Blumenau, SC. Atendimento remoto para todo o Brasil.
 
 Guarda os produtos digitais da Rory Systems, organizados como um monorepo em
 `apps/`. Hoje só existe a landing page; a estrutura já está pronta para
-receber outros projetos do mesmo domínio — o próximo é um app de gestão dos
+receber outros projetos do mesmo domínio. O próximo é um app de gestão dos
 próprios projetos da empresa.
 
 ```
@@ -41,18 +41,18 @@ apps/
 
 ## A landing page
 
-HTML, CSS e JavaScript puros — sem framework, sem passo de build. A página
+HTML, CSS e JavaScript puros, sem framework e sem passo de build. A página
 que vende performance e SEO técnico como serviço não podia carregar um bundle
 de 300 KB só para exibir texto estático.
 
 - **Tema claro/escuro** com botão sol/lua: segue a escolha salva no
   navegador; sem escolha salva, segue o tema do sistema.
-- **Diagrama animado no hero** — a própria logo, ampliada: os três quadrados
+- **Diagrama animado no hero**, a própria logo ampliada: os três quadrados
   se conectam mostrando a dupla frente da empresa (sistema legado ↔ Rory
   Systems ↔ produto novo).
-- **SEO completo** — dados estruturados (schema.org), Open Graph, Twitter
+- **SEO completo**: dados estruturados (schema.org), Open Graph, Twitter
   Card, sitemap e robots.txt.
-- **Progressive enhancement** — sem JavaScript, a página inteira continua
+- **Progressive enhancement**: sem JavaScript, a página inteira continua
   legível e funcional; com JS, ganha menu mobile, revelação suave em scroll
   e envio assíncrono do formulário de contato.
 
