@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /mockups/
 
 Sitemap: https://www.rorysystems.com/sitemap.xml
