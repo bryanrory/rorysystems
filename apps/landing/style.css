@@ -1,0 +1,501 @@
+/* ==========================================================================
+   RORY SYSTEMS — landing definitiva
+
+   Herda a direção visual do rascunho "Enterprise Trust": dark elegante,
+   Hanken Grotesk carregando toda a leitura, IBM Plex Mono só em badge/rótulo,
+   Instrument Serif reservada à citação do fundador.
+
+   REGRA DO GLOW (revisada): brilho existe só em elementos de ação: o botão
+   primário e o nó central do diagrama do hero, que é a própria identidade da
+   marca, não um card de conteúdo. Nenhum card de serviço ou de caso brilha
+   em repouso. Essa disciplina é o que faz o olho achar o CTA sem precisar de
+   seta. Na primeira versão o card de serviço líder brilhava sozinho; aqui as
+   duas frentes (sustentação e produto novo) têm peso visual idêntico, porque
+   essa igualdade é o argumento desta versão.
+   ========================================================================== */
+
+:root{
+  color-scheme: dark;
+
+  --bg:        #0A0C10;
+  --bg-alt:    #0D1017;
+  --bg-plate:  #12151D;
+
+  --border:        rgba(244,241,234,.09);
+  --border-strong: rgba(244,241,234,.18);
+  --border-control:#4A5468;
+
+  --ink:       #F4F1EA;
+  --ink-dim:   #9198A9;
+  --ink-faint: #5B6272;
+
+  --indigo: #2C4A7C;
+  --cyan:   #3ED6E0;
+  --mint:   #4EDCA0;
+  --lux:    62, 214, 224;
+
+  /* Versões sempre vívidas de ciano e menta, para as poucas formas
+     preenchidas (botão primário, ponto do rodapé do hero, a bolinha que
+     caminha no diagrama) que devem manter a cor de marca em qualquer tema.
+     Em --cyan/--mint, que carregam texto, link e borda, o tom claro precisa
+     escurecer para ter contraste de leitura. Ver o bloco de tema logo abaixo. */
+  --cyan-fill: #3ED6E0;
+  --mint-fill: #4EDCA0;
+
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-sans:    'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    'IBM Plex Mono', ui-monospace, Consolas, monospace;
+
+  --s1:.5rem; --s2:.875rem; --s3:1.5rem; --s4:2.25rem; --s5:3.5rem; --s6:5.5rem;
+  --shell: 74rem;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+
+  /* Intensidade dos brilhos. No claro eles encolhem — brilho difuso cai bem
+     em fundo quase preto, mas em fundo claro vira mancha. */
+  --glow-ambient: .12;
+  --glow-cta: .5;
+  --glow-final: .4;
+  --glow-core: .35;
+  --glow-walker: .6;
+
+  /* Fundo do cabeçalho fixo, com o mesmo tom do fundo da página em baixa
+     opacidade — muda junto com o tema. */
+  --bar-bg: rgba(10,12,16,.88);
+}
+
+/* ==========================================================================
+   TEMA CLARO — segue a variação clara oficial da marca (mesmo fundo
+   #F4F1EA e mesma tinta #12151D usados no arquivo-fonte da logo). O índigo
+   já nasceu pensado pra fundo claro: é a cor da palavra "SYSTEMS" na
+   variação clara oficial, então segue igual nos dois temas. Ciano e menta
+   tiveram que escurecer: os tons vivos da marca (#3ED6E0, #4EDCA0) são claros
+   demais pra servir de texto sobre um fundo também claro — em qualquer um
+   dos dois, o contraste fica bem abaixo do mínimo de leitura. --cyan-fill e
+   --mint-fill preservam a cor viva onde ela só precisa preencher uma forma,
+   não ser lida.
+
+   Resolução do tema (ver o script no <head> do index.html): escolha salva
+   pelo botão sol/lua manda sempre; sem escolha salva, segue o tema do
+   sistema; sem os dois, cai neste :root escuro por padrão. O JavaScript já
+   resolve tudo isso e grava o resultado em data-theme antes da primeira
+   pintura da página — este arquivo só reage ao atributo, não decide nada. */
+:root[data-theme="light"]{
+  color-scheme: light;
+
+  --bg:        #FFFFFF;
+  --bg-alt:    #FFFFFF;
+  --bg-plate:  #FFFFFF;
+
+  --border:        rgba(18,21,29,.08);
+  --border-strong: rgba(18,21,29,.16);
+  --border-control:#8A93A3;
+
+  --ink:       #12151D;
+  --ink-dim:   #4B5563;
+  --ink-faint: #7A8194;
+
+  --cyan: #0B7C88;
+  --mint: #0C7A54;
+
+  --bar-bg: rgba(255,255,255,.88);
+
+  /* Os brilhos precisam de mais opacidade sobre branco do que sobre
+     quase-preto pra ficarem igualmente visíveis — a primeira tentativa foi
+     tímida demais e quase sumiu. */
+  --glow-ambient: .14;
+  --glow-cta: .45;
+  --glow-final: .32;
+  --glow-core: .4;
+  --glow-walker: .55;
+}
+
+/* No claro, a faixa de prova e o box final de contato ganham um lavado azul
+   bem fraco (o mesmo ciano do botão primário, em opacidade baixa) em vez do
+   branco liso do resto da página — são os dois únicos pontos com cor de
+   fundo fora do neutro, de propósito, pra pontuar a página sem virar bege
+   amarelado. */
+:root[data-theme="light"] .proof{
+  background: rgba(var(--lux), .2);
+}
+:root[data-theme="light"] .cta-final{
+  background: linear-gradient(180deg, var(--bg-plate), rgba(var(--lux), .3));
+}
+
+*,*::before,*::after{ box-sizing: border-box; }
+
+body{
+  margin:0; background: var(--bg); color: var(--ink);
+  font-family: var(--font-sans); font-size:1rem; line-height:1.65;
+  -webkit-font-smoothing: antialiased; overflow-x:hidden;
+}
+
+h1,h2,h3{ margin:0; line-height:1.05; font-weight:800; letter-spacing:-.035em; }
+p{ margin:0; }
+ul{ margin:0; padding:0; list-style:none; }
+a{ color:inherit; text-decoration:none; }
+img{ max-width:100%; display:block; }
+
+:where(a,button,input,select,textarea):focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
+
+.skip{
+  position:absolute; left:-999px; top:auto;
+  background: var(--cyan-fill); color:#06212B; padding:.75rem 1.25rem; border-radius:0 0 8px 0;
+  font-weight:700; z-index:200;
+}
+.skip:focus{ left:0; top:0; }
+
+.shell{ max-width: var(--shell); margin-inline:auto; padding-inline: var(--gutter); }
+.num{ font-variant-numeric: tabular-nums; }
+
+/* Compensa o header fixo (68px) ao navegar por âncora, para o título da
+   seção não nascer escondido atrás da barra. */
+[id]{ scroll-margin-top: 84px; }
+
+.eyebrow{
+  display:inline-flex; align-items:center; gap:.55rem;
+  font-family: var(--font-mono); font-size:.6875rem; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; color: var(--cyan);
+}
+.eyebrow::before{ content:''; width:6px; height:6px; background: var(--cyan); transform: rotate(45deg); flex:none; }
+
+.tag{
+  font-family: var(--font-mono); font-size:.6875rem; letter-spacing:.04em;
+  color: var(--ink-dim); border:1px solid var(--border); padding:.28rem .55rem; border-radius:4px;
+}
+
+.btn{
+  display:inline-flex; align-items:center; gap:.55rem; font-weight:700; font-size:.9375rem;
+  padding:.85rem 1.5rem; border-radius:8px; cursor:pointer; border:1px solid transparent;
+  min-height:44px;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+.btn--primary{
+  background: var(--cyan-fill); color:#06212B;
+  box-shadow: 0 0 48px -8px rgba(var(--lux),var(--glow-cta)), 0 0 0 1px rgba(var(--lux),.15);
+}
+.btn--primary:hover{ background:#63E4EC; transform: translateY(-1px); }
+.btn--ghost{ border-color: var(--border-control); color: var(--ink); }
+.btn--ghost:hover{ border-color: var(--cyan); color: var(--cyan); }
+.btn--sm{ padding:.6rem 1.1rem; font-size:.8125rem; min-height:38px; }
+.btn:disabled{ opacity:.6; cursor:not-allowed; transform:none; }
+
+/* --- header ----------------------------------------------------------------- */
+
+.bar{
+  position: sticky; top:0; z-index:80;
+  background: var(--bar-bg); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.bar__in{ display:flex; align-items:center; gap: var(--s3); height:68px; max-width: var(--shell); margin-inline:auto; padding-inline: var(--gutter); }
+.brand{ display:flex; align-items:center; gap:.7rem; margin-right:auto; }
+/* Os dois quadrados vazados da logo mostram o fundo por trás — igual nas
+   duas variações oficiais (escura e clara), a marca nunca fica presa a uma
+   cor de fundo fixa. */
+.brand-mark-edge{ fill: var(--bg-alt); }
+.brand-mark-dot{ fill: var(--mint-fill); }
+.brand__w{ display:flex; flex-direction:column; line-height:1; }
+.brand__r{ font-weight:800; font-size:1.0625rem; }
+.brand__s{ font-size:.5625rem; font-weight:600; letter-spacing:.26em; color: var(--cyan); margin-top:.15rem; }
+.nav{ display:flex; gap: var(--s3); }
+.nav a{ font-size:.875rem; font-weight:500; color: var(--ink-dim); transition: color 160ms ease; }
+.nav a:hover{ color: var(--ink); }
+@media (max-width:64rem){ .nav{ display:none; } }
+@media (max-width:64rem){ .nav-cta{ display:none; } }
+
+/* Alternador de tema: sempre visível, em qualquer largura de tela — ao
+   contrário do nav e do nav-cta, que somem no mobile. Os dois ícones ficam
+   sobrepostos no mesmo botão; o CSS mostra um ou outro conforme o tema
+   ativo, sem precisar de JS para isso. */
+.theme-toggle{
+  width:40px; height:40px; flex:none; border-radius:8px;
+  border:1px solid var(--border-control); background:transparent; color: var(--ink-dim);
+  display:grid; place-items:center; cursor:pointer;
+  transition: border-color 160ms ease, color 160ms ease;
+}
+.theme-toggle:hover{ border-color: var(--cyan); color: var(--cyan); }
+.theme-toggle svg{ width:18px; height:18px; }
+.theme-toggle .ic-sun{ display:none; }
+.theme-toggle .ic-moon{ display:block; }
+:root[data-theme="light"] .theme-toggle .ic-sun{ display:block; }
+:root[data-theme="light"] .theme-toggle .ic-moon{ display:none; }
+
+.burger{
+  display:none; flex-direction:column; justify-content:center; gap:5px;
+  width:44px; height:44px; background:none; border:none; cursor:pointer; margin-left:.25rem;
+}
+.burger span{ width:20px; height:2px; background: var(--ink); transition: transform 200ms ease, opacity 200ms ease; }
+@media (max-width:64rem){ .burger{ display:flex; } }
+.burger[aria-expanded="true"] span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+.burger[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+.burger[aria-expanded="true"] span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+.mnav{
+  display:none; flex-direction:column; gap: .25rem;
+  padding: var(--s2) var(--gutter) var(--s3); border-top:1px solid var(--border);
+  background: var(--bg-alt);
+}
+.mnav.is-open{ display:flex; }
+.mnav a{ padding:.75rem 0; font-size:1rem; font-weight:600; color: var(--ink); border-bottom:1px solid var(--border); }
+.mnav .btn{ margin-top: var(--s2); justify-content:center; }
+
+/* --- hero --------------------------------------------------------------------- */
+
+.hero{ position: relative; padding-block: clamp(3.5rem,8vw,6rem) var(--s6); overflow:hidden; }
+.hero::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(52% 46% at 78% 26%, rgba(var(--lux),var(--glow-ambient)), transparent 68%);
+}
+.hero__grid{ position:relative; display:grid; gap: var(--s5); grid-template-columns: minmax(0,1fr); align-items:center; }
+@media (min-width:62rem){ .hero__grid{ grid-template-columns: 1.05fr .95fr; gap: var(--s4); } }
+
+.hero h1{ font-size: clamp(2.4rem, 5.6vw, 3.9rem); text-wrap:balance; margin-top: var(--s3); }
+.hero h1 em{ font-style:normal; color: var(--cyan); }
+.hero__lede{ margin-top: var(--s3); color: var(--ink-dim); font-size:1.0625rem; max-width:38rem; }
+.hero__cta{ display:flex; flex-wrap:wrap; gap:.75rem; margin-top: var(--s4); }
+.hero__meta{ display:flex; flex-wrap:wrap; gap:1.3rem; margin-top: var(--s4); font-size:.8125rem; color: var(--ink-faint); }
+.hero__meta span{ display:inline-flex; align-items:center; gap:.5rem; }
+.hero__meta i{ width:6px; height:6px; border-radius:50%; background: var(--mint-fill); display:inline-block; flex:none; }
+
+/* --- assinatura: diagrama legado / rory systems / produto novo --------------- */
+
+.bridge-mark{ position:relative; }
+.bridge-mark svg{ width:100%; height:auto; display:block; }
+
+/* Abaixo de 62rem o grid de duas colunas some (ver a media query da linha
+   acima) e os dois blocos empilham. Sem isto, o diagrama nasceria em bloco
+   cheio nessa faixa inteira, ocupando quase uma tela sozinho — inclusive só
+   estreitando a janela do navegador no computador, sem precisar de celular
+   de verdade. Usa o MESMO ponto de corte do grid de propósito: aqui ele vira
+   um selo pequeno, fora do fluxo, no canto onde a segunda linha do título
+   ("não pode") ia passar — o H1 reserva a largura pra ele em vez de disputar
+   espaço com o texto. */
+@media (max-width:61.99rem){
+  .hero h1{ max-width:68%; }
+  .bridge-mark{
+    position:absolute; top:1.75rem; right:2rem;
+    width:38%; max-width:12rem;
+  }
+}
+
+/* O traço é um único path em V, do mesmo jeito que na logo original: uma
+   linha que sai do centro do quadrado de baixo à esquerda, sobe até o centro
+   do quadrado de cima, desce até o centro do quadrado de baixo à direita. Os
+   quadrados são desenhados por cima e cobrem as pontas da linha, então o que
+   se vê é só o segmento entre eles, igual à logo. */
+.bm-edge{
+  stroke: var(--border-control); stroke-width:2; fill:none;
+  stroke-dasharray:360; stroke-dashoffset:360;
+  animation: bm-draw 900ms cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes bm-draw{ to{ stroke-dashoffset:0; } }
+
+.bm-node{ opacity:0; animation: bm-pop 420ms cubic-bezier(.2,.8,.3,1) forwards; }
+.bm-node.n1{ animation-delay:60ms; }
+.bm-node.n2{ animation-delay:380ms; }
+.bm-node.n3{ animation-delay:640ms; }
+@keyframes bm-pop{ from{ opacity:0; transform: translateY(6px); } to{ opacity:1; transform:none; } }
+
+.bm-t1, .bm-t2{ font-family: var(--font-mono); font-size:11px; letter-spacing:.05em; fill: var(--ink-dim); text-transform:uppercase; }
+.bm-t2{ fill: var(--ink); font-weight:600; }
+
+.bm-label-top{
+  font-family: var(--font-mono); font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; fill: var(--cyan); font-weight:600;
+}
+
+/* Os dois quadrados de baixo repetem o contorno vazado da logo: fundo escuro,
+   borda em gradiente. */
+.bm-square--edge{ fill: var(--bg-alt); stroke: url(#rs-grad); stroke-width:2.5; }
+
+/* O quadrado de cima é a exceção deliberada à regra do glow: ele é a
+   identidade da marca, o ponto de dobradiça entre legado e produto novo, não
+   um card de conteúdo comum. Preenchido com o gradiente da marca, igual à
+   logo, com um brilho suave por cima. */
+.bm-square--core{
+  fill: url(#rs-grad); stroke:none;
+  filter: drop-shadow(0 0 22px rgba(var(--lux),var(--glow-core)));
+}
+
+/* O ponto menta da logo, aqui andando. Na marca original ele é um indicador
+   de status parado no canto do quadrado de cima; neste diagrama ele vira o
+   próprio caminho: percorre legado, Rory Systems e produto novo, de um lado
+   a outro, sem parar. `alternate` faz o navegador tocar a mesma animação
+   para frente e para trás sozinho, então não existe estado de "chegou e
+   ficou" — só o vaivém contínuo. */
+.bm-walker{
+  fill: var(--mint-fill);
+  filter: drop-shadow(0 0 8px rgba(var(--lux),var(--glow-walker)));
+  offset-path: path('M 64 212 L 160 72 L 256 212');
+  animation: bm-walk 3.6s ease-in-out 1.1s infinite alternate;
+}
+@keyframes bm-walk{
+  from{ offset-distance:0%; }
+  to{ offset-distance:100%; }
+}
+
+/* --- prova ---------------------------------------------------------------- */
+/* Uma única camada de cor para a faixa inteira, na própria .proof — o tom
+   "mais de fora". .proof__grid e .proof__cell não pintam mais fundo próprio:
+   antes cada um tinha o seu, e como ficam empilhados (seção → grid → célula),
+   três camadas semitransparentes coladas produziam três tons diferentes
+   (o vão do grid mostrava só a camada do meio, a célula mostrava as três
+   somadas). Um fundo só, sem sobreposição, sem essa costura visível. */
+.proof{ background: rgba(var(--lux), .08); border-block: 1px solid var(--border); }
+.proof__grid{ display:grid; gap:1px; grid-template-columns: repeat(auto-fit,minmax(14rem,1fr)); }
+.proof__cell{ padding: var(--s5) var(--s3); text-align:center; }
+.proof__n{ font-weight:800; font-size: clamp(3rem, 6.5vw, 4.6rem); line-height:1; letter-spacing:-.03em; color: var(--ink); }
+.proof__n span{ color: var(--cyan); }
+.proof__t{ margin-top: var(--s2); font-size:.9375rem; font-weight:600; color: var(--ink); }
+.proof__d{ margin-top:.4rem; font-size:.8125rem; color: var(--ink-faint); max-width:17rem; margin-inline:auto; }
+
+/* --- seção genérica --------------------------------------------------------- */
+
+.section{ padding-block: var(--s6); border-top:1px solid var(--border); }
+.section__head{ max-width:42rem; margin-bottom: var(--s5); }
+.section__title{ font-size: clamp(1.9rem, 3.6vw, 2.6rem); margin-top:.6rem; }
+.lede{ color: var(--ink-dim); font-size:1.0625rem; margin-top: var(--s2); }
+
+/* --- serviços: duas frentes com peso idêntico -------------------------------- */
+
+.services{ display:grid; gap: var(--s3); grid-template-columns: minmax(0,1fr); margin-bottom: var(--s3); }
+@media (min-width:52rem){ .services{ grid-template-columns: repeat(2,minmax(0,1fr)); } }
+
+.svc{
+  background: var(--bg-plate); border:1px solid var(--border);
+  border-radius:14px; padding: var(--s4); display:flex; flex-direction:column; gap: var(--s2);
+  transition: border-color 220ms ease, transform 220ms ease;
+}
+.svc:hover{ border-color: var(--border-strong); transform: translateY(-3px); }
+.svc--minor{ padding: var(--s3) var(--s4); }
+.svc__badge{ font-family: var(--font-mono); font-size:.625rem; letter-spacing:.1em; text-transform:uppercase; color: var(--mint); }
+.svc__h{ font-size:1.375rem; letter-spacing:-.025em; font-weight:800; }
+.svc--minor .svc__h{ font-size:1.125rem; }
+.svc__p{ color: var(--ink-dim); font-size:.9375rem; font-weight:400; letter-spacing:normal; }
+.svc__tags{ display:flex; flex-wrap:wrap; gap:.4rem; margin-top:auto; padding-top: var(--s2); }
+
+/* --- diagnóstico ------------------------------------------------------------- */
+
+.pledge{
+  background: var(--bg-plate); border:1px solid var(--border-strong); border-radius:16px;
+  padding: var(--s5); display:grid; gap: var(--s4);
+}
+@media (min-width:58rem){ .pledge{ grid-template-columns: 1fr 1.3fr; align-items:center; gap: var(--s6); } }
+.pledge__steps{ display:grid; gap: var(--s3); }
+.pledge__step{ display:flex; gap: var(--s2); align-items:flex-start; }
+.pledge__n{
+  flex:none; width:2rem; height:2rem; border-radius:50%; display:grid; place-items:center;
+  font-family: var(--font-mono); font-size:.75rem; color: var(--mint); border:1px solid rgba(78,220,160,.4);
+  background: rgba(78,220,160,.08);
+}
+.pledge__h{ font-size:1rem; font-weight:700; letter-spacing:-.01em; }
+.pledge__p{ font-size:.875rem; color: var(--ink-dim); font-weight:400; margin-top:.2rem; }
+.pledge__quote{ font-family: var(--font-display); font-style:italic; font-size:1.5rem; line-height:1.35; color: var(--ink); font-weight:400; letter-spacing:0; margin-top:1rem; }
+.pledge__quote span{ color: var(--cyan); }
+.pledge__foot{ margin-top: var(--s3); font-size:.875rem; color: var(--ink-faint); font-weight:400; }
+
+/* --- método ------------------------------------------------------------------- */
+
+.steps{ display:grid; gap:1px; background: var(--border); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+@media (min-width:54rem){ .steps{ grid-template-columns: repeat(4,1fr); } }
+.step{ background: var(--bg-plate); padding: var(--s3); }
+.step__n{ font-family: var(--font-mono); font-size:.75rem; color: var(--indigo); letter-spacing:.06em; }
+.step.is-key .step__n{ color: var(--mint); }
+.step__h{ font-size:1rem; font-weight:700; margin-block:.6rem .5rem; }
+.step__p{ font-size:.875rem; color: var(--ink-dim); font-weight:400; }
+
+/* --- casos --------------------------------------------------------------------- */
+
+/* .case é um <a> inteiro agora: o cartão inteiro leva ao site do caso, não só
+   o rótulo "site.com →" no rodapé. Grid "blockifica" o item automaticamente,
+   então não precisa de display:block explícito. */
+.cases{ display:grid; gap: var(--s3); grid-template-columns: repeat(auto-fit,minmax(17rem,1fr)); }
+.case{
+  background: var(--bg-plate); border:1px solid var(--border); border-radius:14px; overflow:hidden;
+  transition: border-color 200ms ease, transform 200ms ease;
+}
+.case:hover{ border-color: var(--cyan); transform: translateY(-3px); }
+.case:hover .case__a{ text-decoration:underline; }
+.case__shot{ aspect-ratio: 8/5; background: var(--bg-alt); border-bottom:1px solid var(--border); overflow:hidden; }
+.case__shot img{ width:100%; height:100%; object-fit:cover; object-position: top; }
+.case__shot--empty{ display:grid; place-items:center; }
+.case__body{ padding: var(--s3); }
+.case__h{ font-size:1.0625rem; }
+.case__st{ font-family: var(--font-mono); font-size:.5625rem; letter-spacing:.1em; text-transform:uppercase; color: var(--mint); margin-top:.3rem; }
+.case__p{ font-size:.875rem; color: var(--ink-dim); font-weight:400; margin-top:.5rem; }
+.case__a{ display:inline-block; margin-top: var(--s2); font-family: var(--font-mono); font-size:.6875rem; color: var(--cyan); }
+
+/* --- stack --------------------------------------------------------------------- */
+
+.layers{ display:grid; gap:0; }
+.layer{ display:grid; gap: var(--s2); padding-block: var(--s3); border-top:1px solid var(--border); align-items:start; }
+.layers .layer:first-child{ border-top:none; }
+@media (min-width:54rem){ .layer{ grid-template-columns: 10rem minmax(0,1fr); gap: var(--s4); } }
+.layer__t{ font-family: var(--font-mono); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; color: var(--cyan); padding-top:.2rem; }
+.layer__v{ display:flex; flex-wrap:wrap; gap:.45rem; }
+
+/* --- autoridade ------------------------------------------------------------------ */
+
+.who{ background: var(--bg-plate); border:1px solid var(--border); border-radius:18px; padding: var(--s5); display:grid; gap: var(--s4); align-items:center; }
+@media (min-width:52rem){ .who{ grid-template-columns: 9rem minmax(0,1fr); gap: var(--s5); } }
+.who__photo{ width:9rem; height:9rem; border-radius:16px; background: var(--bg-alt); border:1px solid var(--border-strong); overflow:hidden; }
+.who__photo img{ width:100%; height:100%; object-fit:cover; }
+.who__name{ font-size:1.6rem; letter-spacing:-.025em; font-weight:800; }
+.who__role{ font-size:.9375rem; color: var(--cyan); font-weight:600; margin-top:.3rem; }
+.who__p{ margin-top: var(--s3); color: var(--ink-dim); font-size:.9375rem; font-weight:400; max-width:44rem; }
+.who__creds{ display:flex; flex-wrap:wrap; gap: var(--s4); margin-top: var(--s3); }
+.who__cred b{ display:block; font-size:1.15rem; font-weight:800; color: var(--ink); }
+.who__cred span{ font-size:.8125rem; color: var(--ink-faint); }
+.who__cta{ display:flex; gap:.6rem; margin-top: var(--s3); flex-wrap:wrap; }
+
+/* --- contato ---------------------------------------------------------------------- */
+
+.cta-final{
+  background: linear-gradient(180deg, var(--bg-plate), var(--bg-alt));
+  border:1px solid rgba(var(--lux),var(--glow-core)); border-radius:20px;
+  padding: var(--s6) var(--s4); text-align:center; margin-bottom: var(--s6);
+  box-shadow: 0 0 120px -40px rgba(var(--lux),var(--glow-final));
+}
+.cta-final h2{ font-size: clamp(1.8rem,4vw,2.6rem); max-width:32rem; margin-inline:auto; margin-top:1rem; }
+.cta-final p{ margin-top: var(--s2); color: var(--ink-dim); font-weight:400; max-width:34rem; margin-inline:auto; }
+
+.contact{ display:grid; gap: var(--s4); }
+@media (min-width:58rem){ .contact{ grid-template-columns: 1.3fr 1fr; gap: var(--s5); } }
+.grid2{ display:grid; gap:0 1rem; grid-template-columns: repeat(auto-fit,minmax(12rem,1fr)); }
+.field{ display:block; margin-bottom: var(--s2); }
+.field span{ display:block; font-size:.8125rem; font-weight:600; color: var(--ink-dim); margin-bottom:.4rem; }
+.field input, .field select, .field textarea{
+  width:100%; background: var(--bg-alt); color: var(--ink); border:1px solid var(--border-control);
+  border-radius:8px; padding:.75rem .9rem; font-family: var(--font-sans); font-size:.9375rem;
+  transition: border-color 180ms ease;
+}
+.field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color: var(--cyan); }
+.hp{ position:absolute !important; left:-9999px !important; width:1px; height:1px; overflow:hidden; }
+
+.form-msg{ margin-top: var(--s2); font-size:.875rem; min-height:1.2em; }
+.form-msg.is-ok{ color: var(--mint); }
+.form-msg.is-err{ color:#E8836B; }
+
+.chan{ display:block; padding: var(--s3) 0; border-top:1px solid var(--border); }
+.chan__k{ font-family: var(--font-mono); font-size:.625rem; letter-spacing:.1em; text-transform:uppercase; color: var(--ink-faint); }
+.chan b{ display:block; font-weight:700; font-size:1rem; margin-top:.3rem; }
+.chan small{ display:block; color: var(--ink-faint); font-size:.8125rem; margin-top:.15rem; }
+a.chan:hover b{ color: var(--cyan); }
+
+/* --- rodapé ------------------------------------------------------------------------ */
+
+.foot{ border-top:1px solid var(--border); padding-block: var(--s4); }
+.foot__in{ display:flex; flex-wrap:wrap; gap: var(--s3); justify-content:space-between; align-items:center; font-family: var(--font-mono); font-size:.75rem; color: var(--ink-faint); }
+
+/* --- scroll reveal ------------------------------------------------------------------ */
+/* Fade + 12px de deslocamento, 350ms, power1.out — o padrão "subtle" para
+   revelação em scroll. Conteúdo já nasce visível no HTML (sem JS ele
+   permanece assim), o JS só anima a transição para quem tem motion ligado. */
+
+.reveal{ opacity:1; transform:none; }
+.js .reveal{ opacity:0; transform: translateY(12px); transition: opacity 350ms cubic-bezier(.25,.46,.45,.94), transform 350ms cubic-bezier(.25,.46,.45,.94); }
+.js .reveal.is-in{ opacity:1; transform:none; }
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation:none !important; transition:none !important; }
+  .js .reveal{ opacity:1; transform:none; }
+}

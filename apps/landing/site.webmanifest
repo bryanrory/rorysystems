@@ -1,0 +1,13 @@
+{
+  "name": "Rory Systems",
+  "short_name": "Rory Systems",
+  "description": "Sustentação de sistemas críticos e produtos digitais.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0C10",
+  "theme_color": "#0A0C10",
+  "icons": [
+    { "src": "/assets/logo/icon.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/logo/icon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

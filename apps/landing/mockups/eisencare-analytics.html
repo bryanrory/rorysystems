@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440, initial-scale=1" />
+<title>Analytics — EisenCare (mockup para captura de tela)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+/* ==========================================================================
+   Mockup estático da tela Analytics do EisenCare, para servir de captura de
+   tela no case da Rory Systems. Reproduz fielmente o layout real do produto
+   (Sidebar.jsx, Header.jsx, Analytics.jsx, tokens de DESIGN.md), mas com
+   dados fictícios: nenhuma informação de cliente real aparece aqui.
+
+   Não é parte do app EisenCare nem do site publicado. É só a fonte da
+   imagem usada em assets/casos/eisencare.png.
+   ========================================================================== */
+
+:root{
+  --primary: #1A1A2E;
+  --primary-light: #16213E;
+  --accent: #D4A843;
+  --accent-light: #F0C060;
+  --accent-hover: #C49B38;
+  --surface: #FFFFFF;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+
+  --gray-50: #F9FAFB;
+  --gray-100: #F3F4F6;
+  --gray-200: #E5E7EB;
+  --gray-300: #D1D5DB;
+  --gray-400: #9CA3AF;
+  --gray-500: #6B7280;
+  --gray-600: #4B5563;
+  --gray-700: #374151;
+  --gray-800: #1F2937;
+
+  --blue-50: #EFF6FF; --blue-500: #3B82F6; --blue-600: #2563EB;
+  --green-50: #ECFDF5; --green-500: #10B981; --green-600: #059669;
+  --purple-50: #FAF5FF; --purple-500: #A855F7; --purple-600: #9333EA;
+  --yellow-50: #FEFCE8; --yellow-500: #EAB308;
+  --orange-50: #FFF7ED; --orange-400: #FB923C; --orange-500: #F97316;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-sans: 'DM Sans', -apple-system, 'Segoe UI', sans-serif;
+
+  --shadow-card: 0 2px 8px rgba(0,0,0,.08);
+}
+
+*,*::before,*::after{ box-sizing: border-box; }
+html,body{ margin:0; padding:0; }
+body{
+  font-family: var(--font-sans); color: var(--gray-800); background: var(--gray-50);
+  -webkit-font-smoothing: antialiased;
+}
+.icon{ width:18px; height:18px; flex-shrink:0; }
+.icon-sm{ width:16px; height:16px; }
+
+/* --- shell ------------------------------------------------------------- */
+
+.shell{ display:flex; width: 1440px; height: 900px; overflow:hidden; }
+
+/* --- sidebar ------------------------------------------------------------ */
+
+.side{ width:240px; flex-shrink:0; background: var(--primary); display:flex; flex-direction:column; }
+.side__logo{
+  height:64px; display:flex; align-items:center; gap:.75rem; padding-inline:1.25rem;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.side__mark{ width:32px; height:32px; border-radius:8px; background: var(--accent); display:grid; place-items:center; flex-shrink:0; }
+.side__mark svg{ width:16px; height:16px; color: var(--primary); }
+.side__word{ font-family: var(--font-display); font-weight:700; font-size:1.125rem; letter-spacing:.02em; color:#fff; }
+
+.side__nav{ flex:1; padding-block:1rem; overflow:hidden; }
+.side__item{
+  display:flex; align-items:center; gap:.75rem; margin:0 .5rem .25rem; padding:.6rem .75rem;
+  border-radius:8px; font-size:.875rem; font-weight:500; color:#D1D5DB;
+}
+.side__item svg{ color:#D1D5DB; }
+.side__item.is-active{ background: var(--accent); color: var(--primary); font-weight:600; }
+.side__item.is-active svg{ color: var(--primary); }
+
+.side__user{ border-top:1px solid rgba(255,255,255,.1); padding:.75rem; display:flex; align-items:center; gap:.75rem; }
+.side__avatar{
+  width:36px; height:36px; border-radius:8px; background: var(--accent); flex-shrink:0;
+  display:grid; place-items:center; font-size:.75rem; font-weight:700; color: var(--primary);
+}
+.side__uname{ font-size:.875rem; font-weight:500; color:#fff; }
+.side__urole{ font-size:.75rem; color:#9CA3AF; }
+
+/* --- main / header -------------------------------------------------------- */
+
+.main{ flex:1; display:flex; flex-direction:column; min-width:0; }
+
+.top{
+  height:64px; background:#fff; border-bottom:1px solid var(--gray-100);
+  display:flex; align-items:center; gap:1rem; padding-inline:1.5rem; flex-shrink:0;
+}
+.top__title{ font-family: var(--font-display); font-weight:700; font-size:1.25rem; color: var(--primary); flex:1; }
+.top__search{
+  display:flex; align-items:center; gap:.5rem; background: var(--gray-50); border:1px solid var(--gray-200);
+  border-radius:8px; padding-inline:.75rem; height:40px; width:256px; color: var(--gray-400); font-size:.875rem;
+}
+.top__cta{
+  display:flex; align-items:center; gap:.5rem; background: var(--accent); color: var(--primary);
+  font-size:.875rem; font-weight:600; padding-inline:1rem; height:40px; border-radius:8px;
+}
+.top__icon-btn{
+  width:40px; height:40px; border-radius:8px; display:grid; place-items:center; color: var(--gray-500); position:relative;
+}
+.top__badge{
+  position:absolute; top:6px; right:6px; width:8px; height:8px; border-radius:50%;
+  background: var(--danger); border:2px solid #fff;
+}
+
+.content{ flex:1; padding:1.5rem; overflow:hidden; }
+.wrap{ max-width: 62rem; display:flex; flex-direction:column; gap:2rem; }
+
+.section__title{ font-family: var(--font-display); font-weight:700; font-size:1rem; color: var(--primary); margin:0 0 .75rem; }
+
+/* --- cards --------------------------------------------------------------- */
+
+.card{ background:#fff; border-radius:16px; box-shadow: var(--shadow-card); padding:1rem; }
+.card--pad{ padding:1.25rem; }
+
+.kpis{ display:grid; grid-template-columns: repeat(3, 1fr); gap:.75rem; }
+.kpi{ display:flex; align-items:flex-start; gap:.75rem; }
+.kpi__ic{ width:40px; height:40px; border-radius:12px; display:grid; place-items:center; flex-shrink:0; }
+.kpi__label{ font-size:.75rem; color: var(--gray-400); font-weight:500; }
+.kpi__value{ font-size:1.25rem; font-weight:700; color: var(--primary); margin-top:.125rem; line-height:1.2; }
+.kpi__sub{ font-size:.75rem; color: var(--gray-400); margin-top:.125rem; }
+.kpi__sub.up{ color: var(--green-600); font-weight:600; }
+
+.trio{ display:grid; grid-template-columns: repeat(3, 1fr); gap:.75rem; }
+.trio .card__head{ display:flex; align-items:center; gap:.5rem; margin-bottom:.25rem; }
+.trio .card__head span{ font-size:.75rem; font-weight:600; color: var(--gray-500); }
+.trio .card__big{ font-size:1.5rem; font-weight:700; }
+.trio .card__note{ font-size:.75rem; color: var(--gray-400); margin-top:.25rem; }
+
+.quad{ display:grid; grid-template-columns: repeat(2, 1fr); gap:.75rem; }
+.quad .card__head{ display:flex; align-items:center; gap:.5rem; margin-bottom:.75rem; }
+.quad .card__head span{ font-size:.75rem; font-weight:600; color: var(--gray-500); }
+.quad .card__name{ font-weight:700; color: var(--primary); }
+.quad .card__amt{ font-size:.875rem; color: var(--green-600); font-weight:600; margin-top:.125rem; }
+.quad .card__count{ font-size:.875rem; color: var(--gray-500); margin-top:.125rem; }
+
+.proj{ display:flex; flex-direction:column; gap:1rem; }
+.proj__top{ display:flex; align-items:flex-start; justify-content:space-between; }
+.proj__label{ font-size:.75rem; color: var(--gray-400); font-weight:500; }
+.proj__value{ font-size:1.5rem; font-weight:700; color: var(--primary); margin-top:.125rem; }
+.proj__note{ font-size:.75rem; color: var(--gray-400); margin-top:.25rem; }
+.proj__bar-row{ display:flex; justify-content:space-between; font-size:.75rem; color: var(--gray-500); margin-bottom:.375rem; }
+.proj__bar{ height:12px; background: var(--gray-100); border-radius:999px; overflow:hidden; }
+.proj__bar-fill{ height:100%; background: var(--accent); border-radius:999px; width:92%; }
+.proj__insight{ font-size:.875rem; font-weight:600; color: var(--gray-600); }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="side">
+    <div class="side__logo">
+      <div class="side__mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
+      </div>
+      <span class="side__word">EisenCare</span>
+    </div>
+
+    <nav class="side__nav">
+      <!-- cada item usa um glifo simples, no espírito de ícone de traço fino -->
+      <div class="side__item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Início</div>
+      <div class="side__item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Agenda</div>
+      <div class="side__item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16.5 20a5 5 0 0 0-2.7-8.7"/><circle cx="17" cy="8.5" r="2.3"/></svg>Clientes</div>
+      <div class="side__item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/><path d="M17.5 3.5a4 4 0 0 1 0 7"/></svg>Profissionais</div>
+      <div class="side__item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.5 15.5M14.5 14.5L20 20M8.5 8.5L11 11"/></svg>Serviços</div>
+      <div class="side__item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/></svg>Produtos</div>
+      <div class="side__item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>Combos</div>
+      <div class="side__item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4 3 5-7 5 7 4-3-2 11H5z"/></svg>Planos VIP</div>
+      <div class="side__item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 12.2L12.8 20a1.9 1.9 0 0 1-2.7 0l-7-7a1.9 1.9 0 0 1 0-2.7L10.8 2.6A2 2 0 0 1 12.2 2H19a2 2 0 0 1 2 2v6.8a2 2 0 0 1-.4 1.4z"/><circle cx="15.5" cy="8.5" r="1.2"/></svg>Cupons</div>
+      <div class="side__item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 2.5h6M8.5 10h7M8.5 14h7M8.5 18h4"/></svg>Comanda</div>
+      <div class="side__item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="13" rx="2"/><path d="M2.5 10.5h19M7 15h4"/></svg>Caixa</div>
+      <div class="side__item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M11 20V4M18 20v-7"/></svg>Relatórios</div>
+      <div class="side__item is-active"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 4 8-9"/><path d="M14 6h6v6"/></svg>Analytics</div>
+      <div class="side__item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a7.4 7.4 0 0 0 0-2l2-1.5-2-3.4-2.4.6a7.6 7.6 0 0 0-1.7-1L15 3h-6l-.3 2.7a7.6 7.6 0 0 0-1.7 1l-2.4-.6-2 3.4L4.6 11a7.4 7.4 0 0 0 0 2l-2 1.5 2 3.4 2.4-.6a7.6 7.6 0 0 0 1.7 1L9 21h6l.3-2.7a7.6 7.6 0 0 0 1.7-1l2.4.6 2-3.4z"/></svg>Config.</div>
+    </nav>
+
+    <div class="side__user">
+      <div class="side__avatar">AS</div>
+      <div>
+        <div class="side__uname">Ana Souza</div>
+        <div class="side__urole">Administrador</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <div class="main">
+
+    <!-- header: pesquisa, botão de agendar, notificações -->
+    <header class="top">
+      <h1 class="top__title">Analytics</h1>
+
+      <div class="top__search">
+        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        Buscar...
+      </div>
+
+      <button class="top__cta">
+        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Agendar
+      </button>
+
+      <div class="top__icon-btn">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+      </div>
+      <div class="top__icon-btn">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <span class="top__badge"></span>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="wrap">
+
+        <!-- ── resumo do mês ─────────────────────────────────────────── -->
+        <section>
+          <h2 class="section__title">Resumo do mês</h2>
+          <div class="kpis">
+            <div class="card kpi">
+              <div class="kpi__ic" style="background:var(--green-50)">
+                <svg class="icon" style="color:var(--green-600)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <div>
+                <p class="kpi__label">Faturamento (mês atual)</p>
+                <p class="kpi__value">R$ 24.850,00</p>
+                <p class="kpi__sub up">+12% vs. mês anterior</p>
+              </div>
+            </div>
+            <div class="card kpi">
+              <div class="kpi__ic" style="background:var(--blue-50)">
+                <svg class="icon" style="color:var(--blue-600)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16l5-6 4 4 7-9"/><path d="M4 20h16"/></svg>
+              </div>
+              <div>
+                <p class="kpi__label">Variação mês anterior</p>
+                <p class="kpi__value" style="color:var(--green-600)">+12%</p>
+                <p class="kpi__sub">R$ 22.190,00 no mês anterior</p>
+              </div>
+            </div>
+            <div class="card kpi">
+              <div class="kpi__ic" style="background:var(--yellow-50)">
+                <svg class="icon" style="color:var(--accent-hover)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.5 15.5M14.5 14.5L20 20M8.5 8.5L11 11"/></svg>
+              </div>
+              <div>
+                <p class="kpi__label">Ticket médio</p>
+                <p class="kpi__value">R$ 68,00</p>
+                <p class="kpi__sub">365 atendimentos</p>
+              </div>
+            </div>
+            <div class="card kpi">
+              <div class="kpi__ic" style="background:var(--blue-50)">
+                <svg class="icon" style="color:var(--blue-600)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M17 8v6M14 11h6"/></svg>
+              </div>
+              <div>
+                <p class="kpi__label">Clientes novos</p>
+                <p class="kpi__value">42</p>
+                <p class="kpi__sub">cadastrados este mês</p>
+              </div>
+            </div>
+            <div class="card kpi">
+              <div class="kpi__ic" style="background:var(--purple-50)">
+                <svg class="icon" style="color:var(--purple-600)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M15.5 9.5l2 2 3.5-4"/></svg>
+              </div>
+              <div>
+                <p class="kpi__label">Clientes recorrentes</p>
+                <p class="kpi__value">218</p>
+                <p class="kpi__sub">voltaram este mês</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── retenção ──────────────────────────────────────────────── -->
+        <section>
+          <h2 class="section__title">Retenção de clientes</h2>
+          <div class="trio">
+            <div class="card card--pad">
+              <div class="card__head">
+                <svg class="icon-sm" style="color:var(--green-500)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M15.5 9.5l2 2 3.5-4"/></svg>
+                <span>Ativos (30 dias)</span>
+              </div>
+              <p class="card__big" style="color:var(--green-600)">312</p>
+              <p class="card__note">com agendamento nos últimos 30 dias</p>
+            </div>
+            <div class="card card--pad">
+              <div class="card__head">
+                <svg class="icon-sm" style="color:var(--orange-400)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M15 9l5 5M20 9l-5 5"/></svg>
+                <span>Inativos (&gt;45 dias)</span>
+              </div>
+              <p class="card__big" style="color:var(--orange-500)">47</p>
+              <p class="card__note">sem agendamento há mais de 45 dias</p>
+            </div>
+            <div class="card card--pad">
+              <div class="card__head">
+                <svg class="icon-sm" style="color:var(--blue-500)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+                <span>Frequência média</span>
+              </div>
+              <p class="card__big" style="color:var(--primary)">24 dias</p>
+              <p class="card__note">entre retornos (clientes com ≥2 visitas)</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── ranking ───────────────────────────────────────────────── -->
+        <section>
+          <h2 class="section__title">Ranking de performance — mês atual</h2>
+          <div class="quad">
+            <div class="card card--pad">
+              <div class="card__head">
+                <svg class="icon-sm" style="color:var(--yellow-500)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v4a4 4 0 0 1-8 0V4z"/><path d="M8 5H5a3 3 0 0 0 3 5M16 5h3a3 3 0 0 1-3 5"/><path d="M12 13v3M9 20h6M10 16h4v4h-4z"/></svg>
+                <span>Top profissional</span>
+              </div>
+              <p class="card__name">Rafael Souza</p>
+              <p class="card__amt">R$ 8.420,00</p>
+            </div>
+            <div class="card card--pad">
+              <div class="card__head">
+                <svg class="icon-sm" style="color:var(--accent-hover)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.5 15.5M14.5 14.5L20 20M8.5 8.5L11 11"/></svg>
+                <span>Serviço mais vendido</span>
+              </div>
+              <p class="card__name">Corte + Barba</p>
+              <p class="card__count">156 atendimentos</p>
+            </div>
+            <div class="card card--pad">
+              <div class="card__head">
+                <svg class="icon-sm" style="color:var(--green-500)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>Serviço mais lucrativo</span>
+              </div>
+              <p class="card__name">Combo Premium</p>
+              <p class="card__amt">R$ 6.780,00</p>
+            </div>
+            <div class="card card--pad">
+              <div class="card__head">
+                <svg class="icon-sm" style="color:var(--purple-500)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+                <span>Horário de pico</span>
+              </div>
+              <p class="card__name" style="font-size:1.25rem">18:00</p>
+              <p class="card__count">34 agendamentos</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── projeção ──────────────────────────────────────────────── -->
+        <section>
+          <h2 class="section__title">Projeção do próximo mês</h2>
+          <div class="card card--pad proj">
+            <div class="proj__top">
+              <div>
+                <p class="proj__label">Projeção</p>
+                <p class="proj__value">R$ 27.100,00</p>
+                <p class="proj__note">baseada na média dos últimos 3 meses</p>
+              </div>
+              <svg class="icon" style="width:32px;height:32px;color:var(--accent);opacity:.3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>
+            </div>
+            <div>
+              <div class="proj__bar-row"><span>Mês atual: R$ 24.850,00</span><span>92%</span></div>
+              <div class="proj__bar"><div class="proj__bar-fill"></div></div>
+            </div>
+            <p class="proj__insight">Ótimo progresso — 92% da projeção</p>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

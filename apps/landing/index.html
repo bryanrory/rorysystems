@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="pt-BR" class="no-js">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+/* Resolve o tema antes da primeira pintura, pra não piscar um tema e trocar
+   pro outro em seguida. Ordem: escolha salva no navegador > tema do sistema
+   > escuro por padrão. Fica bloqueante e no topo do <head> de propósito —
+   depois deste ponto, o CSS já sabe qual data-theme usar assim que carregar. */
+(function(){
+  var root = document.documentElement;
+  var meta = document.querySelector('meta[name="theme-color"]');
+  function aplicar(tema){
+    root.setAttribute('data-theme', tema);
+    if (meta) meta.setAttribute('content', tema === 'light' ? '#FFFFFF' : '#0A0C10');
+  }
+  var salvo = null;
+  try { salvo = localStorage.getItem('rs-theme'); } catch (e) {}
+  if (salvo === 'light' || salvo === 'dark') { aplicar(salvo); }
+  else {
+    var sistemaClaro = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    aplicar(sistemaClaro ? 'light' : 'dark');
+  }
+})();
+</script>
+<title>Rory Systems | Sustentação de sistemas críticos e produtos digitais</title>
+<meta name="description" content="A Rory Systems sustenta os sistemas que não podem parar e constrói os produtos que vêm a seguir: legado em Delphi e .NET, SaaS sob medida e produtos digitais de alta conversão." />
+<meta name="keywords" content="sustentação de sistemas, sistemas legados, Delphi, .NET, modernização de sistemas, desenvolvimento SaaS, consultoria de software, engenharia de sistemas críticos, Blumenau" />
+<meta name="author" content="Rory Systems" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://www.rorysystems.com/" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Rory Systems | Sustentação de sistemas críticos e produtos digitais" />
+<meta property="og:description" content="Sustentamos o que não pode parar. Construímos o que vem a seguir. Engenharia de sistemas críticos, modernização e produtos digitais sob medida." />
+<meta property="og:url" content="https://www.rorysystems.com/" />
+<meta property="og:site_name" content="Rory Systems" />
+<meta property="og:image" content="https://www.rorysystems.com/assets/og/og-image.png" />
+<meta property="og:locale" content="pt_BR" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Rory Systems | Sustentação de sistemas críticos e produtos digitais" />
+<meta name="twitter:description" content="Sustentamos o que não pode parar. Construímos o que vem a seguir." />
+<meta name="twitter:image" content="https://www.rorysystems.com/assets/og/og-image.png" />
+
+<!-- Favicons -->
+<link rel="icon" href="/assets/logo/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" href="/assets/logo/icon.png" />
+<link rel="apple-touch-icon" href="/assets/logo/icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<meta name="theme-color" content="#0A0C10" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=IBM+Plex+Mono:wght@500;600&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+
+<!-- Schema.org -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Rory Systems",
+  "url": "https://www.rorysystems.com",
+  "logo": "https://www.rorysystems.com/assets/logo/icon.png",
+  "image": "https://www.rorysystems.com/assets/og/og-image.png",
+  "description": "Sustentação de sistemas críticos (Delphi, .NET, SQL Server) e desenvolvimento de produtos digitais novos, SaaS e sites de conversão.",
+  "email": "comercial@rorysystems.com",
+  "telephone": "+5547991633210",
+  "address": { "@type": "PostalAddress", "addressLocality": "Blumenau", "addressRegion": "SC", "addressCountry": "BR" },
+  "areaServed": "BR",
+  "founder": { "@type": "Person", "name": "Bryan Rory Ferreira" },
+  "sameAs": [ "https://linkedin.com/in/bryan-rory", "https://bryanrory.github.io" ]
+}
+</script>
+</head>
+<body>
+
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <linearGradient id="rs-grad" x1="0" y1="64" x2="64" y2="0">
+      <stop offset="0" stop-color="#2C4A7C"/><stop offset="1" stop-color="#3ED6E0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<header class="bar">
+  <div class="bar__in">
+    <a class="brand" href="#topo">
+      <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M18,44 L34,24 L50,44" fill="none" stroke="url(#rs-grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect class="brand-mark-edge" x="10" y="36" width="16" height="16" rx="4" stroke="url(#rs-grad)" stroke-width="2.5"/>
+        <rect x="26" y="16" width="16" height="16" rx="4" fill="url(#rs-grad)"/>
+        <rect class="brand-mark-edge" x="42" y="36" width="16" height="16" rx="4" stroke="url(#rs-grad)" stroke-width="2.5"/>
+        <circle class="brand-mark-dot" cx="42" cy="18" r="3"/>
+      </svg>
+      <span class="brand__w"><span class="brand__r">Rory</span><span class="brand__s">SYSTEMS</span></span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="#servicos">Serviços</a>
+      <a href="#metodo">Método</a>
+      <a href="#casos">Casos</a>
+      <a href="#autoridade">Sobre</a>
+    </nav>
+    <a class="btn btn--primary btn--sm nav-cta" href="#contato">Falar com especialista</a>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Alternar para tema claro">
+      <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"/></svg>
+      <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="mnav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mnav" id="mnav">
+    <a href="#servicos">Serviços</a>
+    <a href="#metodo">Método</a>
+    <a href="#casos">Casos</a>
+    <a href="#autoridade">Sobre</a>
+    <a class="btn btn--primary" href="#contato">Falar com especialista</a>
+  </div>
+</header>
+
+<main id="conteudo">
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="topo">
+    <div class="shell hero__grid">
+      <div>
+        <p class="eyebrow">Sustentação &amp; produtos digitais</p>
+        <h1>Sustentamos o que <em>não pode parar.</em><br>Construímos o que <em>vem a seguir.</em></h1>
+        <p class="hero__lede">
+          A Rory Systems faz as duas coisas: mantém sistemas críticos que já
+          sustentam sua operação e constrói os produtos que ela ainda não
+          tem, como SaaS, aplicações, integrações com IA e sites de
+          conversão.
+        </p>
+        <div class="hero__cta">
+          <a class="btn btn--primary" href="#contato">Falar com especialista</a>
+          <a class="btn btn--ghost" href="#diagnostico">Agendar diagnóstico</a>
+        </div>
+        <div class="hero__meta">
+          <span><i></i>Blumenau, SC</span>
+          <span><i></i>Atendimento remoto no Brasil</span>
+          <span><i></i>Resposta média: 2 horas</span>
+        </div>
+      </div>
+
+      <!-- Assinatura do hero: a própria logo, ampliada e explodida em
+           diagrama. O quadrado de cima é o mesmo da marca; os dois de baixo
+           repetem seu contorno vazado. O traço em V que os liga é o mesmo
+           path da logo original, só que agora liga ideias em vez de decorar
+           um ícone de 64px. O ponto menta da logo, que ali é um indicador de
+           status parado, aqui vira o elemento que caminha: percorre o
+           caminho inteiro, de um lado a outro, sem parar. -->
+      <div class="bridge-mark reveal" aria-hidden="true">
+        <svg viewBox="0 0 320 300" role="img" aria-label="Logo da Rory Systems ampliada em diagrama: sistema legado e produto novo conectados pela Rory Systems, ao centro.">
+          <!-- o traço fica atrás dos quadrados, do mesmo jeito que na logo original -->
+          <path class="bm-edge" d="M 64 212 L 160 72 L 256 212"/>
+
+          <text x="160" y="20" text-anchor="middle" class="bm-label-top">RORY SYSTEMS</text>
+
+          <g class="bm-node n1">
+            <rect class="bm-square bm-square--edge" x="32" y="180" width="64" height="64" rx="14"/>
+          </g>
+          <text x="64" y="266" text-anchor="middle" class="bm-t1">sistema</text>
+          <text x="64" y="283" text-anchor="middle" class="bm-t2">legado</text>
+
+          <g class="bm-node n2 is-core">
+            <rect class="bm-square bm-square--core" x="128" y="40" width="64" height="64" rx="14"/>
+          </g>
+
+          <g class="bm-node n3">
+            <rect class="bm-square bm-square--edge" x="224" y="180" width="64" height="64" rx="14"/>
+          </g>
+          <text x="256" y="266" text-anchor="middle" class="bm-t1">produto</text>
+          <text x="256" y="283" text-anchor="middle" class="bm-t2">novo</text>
+
+          <!-- o ponto de status da logo, caminhando entre os três nós -->
+          <circle class="bm-walker" r="7"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROVA ===== -->
+  <section class="proof">
+    <div class="shell proof__grid">
+      <div class="proof__cell reveal">
+        <p class="proof__n num">99<span>%</span></p>
+        <p class="proof__t">de SLA sustentado</p>
+        <p class="proof__d">Nos últimos 6 anos, considerando os sistemas críticos que sustento.</p>
+      </div>
+      <div class="proof__cell reveal">
+        <p class="proof__n num"><span>−</span>90<span>%</span></p>
+        <p class="proof__t">de retorno pós-entrega</p>
+        <p class="proof__d">Desde que documentar antes de codar virou parte do processo.</p>
+      </div>
+      <div class="proof__cell reveal">
+        <p class="proof__n num">20</p>
+        <p class="proof__t">anos de tecnologia em uso</p>
+        <p class="proof__d">Da tecnologia legada à IA, atuando em todas as frentes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SERVIÇOS: duas frentes, mesmo peso ===== -->
+  <section class="section shell" id="servicos">
+    <div class="section__head reveal">
+      <p class="eyebrow">O que fazemos</p>
+      <h2 class="section__title">Duas frentes, um critério só</h2>
+      <p class="lede">
+        A tecnologia muda de projeto para projeto, conforme o que o problema
+        pede. Hoje isso significa manter um sistema legado de vinte anos
+        rodando e, na semana seguinte, subir um produto novo com IA
+        integrada ao desenvolvimento.
+      </p>
+    </div>
+
+    <div class="services">
+      <article class="svc reveal">
+        <p class="svc__badge">Sustentação &amp; resgate</p>
+        <h3 class="svc__h">Sistemas críticos que não podem parar</h3>
+        <p class="svc__p">
+          Legado que segura a operação e que já ninguém domina por inteiro.
+          Lemos o código antes de propor, corrigimos a causa em vez do
+          sintoma e documentamos o que aprendemos. Assim a próxima pessoa não
+          precisa refazer a arqueologia.
+        </p>
+        <div class="svc__tags">
+          <span class="tag">Operação sem parar</span>
+          <span class="tag">Causa corrigida</span>
+          <span class="tag">Conhecimento documentado</span>
+        </div>
+      </article>
+
+      <article class="svc reveal">
+        <p class="svc__badge">Produto novo &amp; SaaS</p>
+        <h3 class="svc__h">O que a sua operação ainda não tem</h3>
+        <p class="svc__p">
+          Do primeiro diagrama ao ambiente em produção. Arquitetura em
+          camadas, banco modelado, API e interface, pensados para durar mais
+          que a primeira versão. Usamos IA no próprio ciclo de
+          desenvolvimento para entregar mais rápido sem pular etapa de
+          revisão.
+        </p>
+        <div class="svc__tags">
+          <span class="tag">Do zero à produção</span>
+          <span class="tag">Arquitetura para crescer</span>
+          <span class="tag">IA no desenvolvimento</span>
+        </div>
+      </article>
+    </div>
+
+    <article class="svc svc--minor reveal">
+      <p class="svc__badge">Presença digital</p>
+      <h3 class="svc__h">Sites e landing pages de conversão</h3>
+      <p class="svc__p">
+        O que importa aqui é quanto contato geram e quão rápido carregam.
+        SEO técnico, dados estruturados e nenhum framework carregado à toa.
+      </p>
+      <div class="svc__tags">
+        <span class="tag">Carregamento imediato</span>
+        <span class="tag">SEO técnico</span>
+        <span class="tag">Contato como métrica</span>
+      </div>
+    </article>
+  </section>
+
+  <!-- ===== DIAGNÓSTICO (reversão de risco) ===== -->
+  <section class="section shell" id="diagnostico">
+    <div class="pledge reveal">
+      <div>
+        <p class="eyebrow">Diagnóstico de sistema</p>
+        <p class="pledge__quote">
+          "Se o diagnóstico apontar que você <span>não precisa</span> da gente, o documento diz isso."
+        </p>
+        <p class="pledge__foot">Quem atende é o engenheiro que vai assinar o trabalho, não um vendedor.</p>
+      </div>
+      <div class="pledge__steps">
+        <div class="pledge__step">
+          <span class="pledge__n">1</span>
+          <div><p class="pledge__h">Conversa de 45 minutos</p><p class="pledge__p">Sobre o sistema (ou a ideia), os sintomas e desde quando.</p></div>
+        </div>
+        <div class="pledge__step">
+          <span class="pledge__n">2</span>
+          <div><p class="pledge__h">Diagnóstico por escrito</p><p class="pledge__p">Riscos encontrados e o que resolver primeiro.</p></div>
+        </div>
+        <div class="pledge__step">
+          <span class="pledge__n">3</span>
+          <div><p class="pledge__h">Estimativa de esforço</p><p class="pledge__p">Sem custo e sem compromisso de contratar.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MÉTODO ===== -->
+  <section class="section shell" id="metodo">
+    <div class="section__head reveal">
+      <p class="eyebrow">Como trabalhamos</p>
+      <h2 class="section__title">Quatro fases, sempre nesta ordem</h2>
+    </div>
+    <div class="steps reveal">
+      <div class="step">
+        <p class="step__n">Fase 01</p>
+        <h3 class="step__h">Entendimento</h3>
+        <p class="step__p">Lê-se o sistema, ou o problema de negócio, antes de propor qualquer coisa.</p>
+      </div>
+      <div class="step is-key">
+        <p class="step__n">Fase 02 · chave</p>
+        <h3 class="step__h">Escopo escrito</h3>
+        <p class="step__p">O que está dentro e o que está fora, em documento assinado. Derruba 90% dos retornos.</p>
+      </div>
+      <div class="step">
+        <p class="step__n">Fase 03</p>
+        <h3 class="step__h">Execução</h3>
+        <p class="step__p">Ciclos curtos, com o que já está pronto sempre visível e testável.</p>
+      </div>
+      <div class="step">
+        <p class="step__n">Fase 04</p>
+        <h3 class="step__h">Sustentação</h3>
+        <p class="step__p">Depois da entrega, o sistema continua tendo dono e acompanhamento.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CASOS ===== -->
+  <section class="section shell" id="casos">
+    <div class="section__head reveal">
+      <p class="eyebrow">Casos</p>
+      <h2 class="section__title">O que já está no ar</h2>
+    </div>
+    <div class="cases">
+      <a class="case reveal" href="https://www.eisencare.com" target="_blank" rel="noopener">
+        <div class="case__shot">
+          <img src="assets/casos/eisencare.png" alt="Dashboard administrativo do EisenCare" loading="lazy" width="640" height="400" />
+        </div>
+        <div class="case__body">
+          <h3 class="case__h">EisenCare</h3>
+          <p class="case__st">● em produção</p>
+          <p class="case__p">SaaS de gestão para barbearias, com clientes reais. Multi-tenant por slug de URL, agenda com regras de conflito e área do cliente.</p>
+          <span class="case__a">eisencare.com →</span>
+        </div>
+      </a>
+      <a class="case reveal" href="https://hogarsys.duckdns.org" target="_blank" rel="noopener">
+        <div class="case__shot">
+          <img src="assets/casos/hogarsys.png" alt="Landing page do HogarSys" loading="lazy" width="640" height="400" />
+        </div>
+        <div class="case__body">
+          <h3 class="case__h">HogarSys</h3>
+          <p class="case__st">● acesso antecipado</p>
+          <p class="case__p">Gestão para estúdios de arquitetura e design: clientes, projetos e financeiro num lugar só, com fases de projeto e honorários.</p>
+          <span class="case__a">hogarsys.duckdns.org →</span>
+        </div>
+      </a>
+      <a class="case reveal" href="https://www.m7marcenaria.com" target="_blank" rel="noopener">
+        <div class="case__shot">
+          <img src="assets/casos/m7marcenaria.png" alt="Site institucional da M7 Marcenaria" loading="lazy" width="640" height="400" />
+        </div>
+        <div class="case__body">
+          <h3 class="case__h">M7 Marcenaria</h3>
+          <p class="case__st">● em produção</p>
+          <p class="case__p">Site institucional com painel de administração próprio: o cliente publica os ambientes sem depender de ninguém.</p>
+          <span class="case__a">m7marcenaria.com →</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== STACK: a prova visual da dualidade ===== -->
+  <section class="section shell" id="stack">
+    <div class="section__head reveal">
+      <p class="eyebrow">Stack</p>
+      <h2 class="section__title">O que usamos, organizado por camada</h2>
+      <p class="lede">Um sistema legado de vinte anos e um produto recém-lançado pedem o mesmo cuidado: entender o sistema antes de mexer nele. Nenhum dos dois é tratado como descartável.</p>
+    </div>
+    <div class="layers reveal">
+      <div class="layer"><p class="layer__t">Backend</p><div class="layer__v">
+        <span class="tag">C# / .NET</span><span class="tag">ASP.NET Core</span><span class="tag">EF Core</span>
+        <span class="tag">Delphi 7/10</span><span class="tag">Python</span><span class="tag">Node.js</span><span class="tag">TypeScript</span>
+      </div></div>
+      <div class="layer"><p class="layer__t">Frontend</p><div class="layer__v">
+        <span class="tag">React</span><span class="tag">Next.js</span><span class="tag">Vite</span><span class="tag">Tailwind</span><span class="tag">HTML/CSS/JS</span>
+      </div></div>
+      <div class="layer"><p class="layer__t">Dados</p><div class="layer__v">
+        <span class="tag">SQL Server (T-SQL)</span><span class="tag">PostgreSQL</span><span class="tag">Oracle</span><span class="tag">MySQL</span>
+      </div></div>
+      <div class="layer"><p class="layer__t">Integração</p><div class="layer__v">
+        <span class="tag">API REST</span><span class="tag">RabbitMQ</span><span class="tag">TCP/IP</span><span class="tag">CNAB</span>
+      </div></div>
+      <div class="layer"><p class="layer__t">Infra e entrega</p><div class="layer__v">
+        <span class="tag">Docker</span><span class="tag">Linux Debian</span><span class="tag">Windows Server</span>
+        <span class="tag">Caddy / Nginx</span><span class="tag">GitHub Actions</span>
+      </div></div>
+      <div class="layer"><p class="layer__t">IA aplicada</p><div class="layer__v">
+        <span class="tag">Claude API</span><span class="tag">Claude Code</span>
+        <span class="tag">Engenharia de contexto</span><span class="tag">Agentes com ferramentas</span>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ===== AUTORIDADE ===== -->
+  <section class="section shell" id="autoridade">
+    <div class="who reveal">
+      <div class="who__photo">
+        <img src="assets/perfil/bryan.png" alt="Foto de Bryan Rory Ferreira" loading="lazy" width="144" height="144" onerror="this.remove()" />
+      </div>
+      <div>
+        <p class="who__name">Bryan Rory Ferreira</p>
+        <p class="who__role">Analista de Sistemas Sênior</p>
+        <p class="who__p">
+          Os números desta página vêm da trajetória dele sustentando
+          sistemas corporativos de grande porte. É essa experiência que a
+          Rory Systems traz para cada projeto, novo ou legado.
+        </p>
+        <div class="who__creds">
+          <div class="who__cred"><b>9+ anos</b><span>em tecnologia, do suporte à engenharia de sistemas</span></div>
+          <div class="who__cred"><b>100+ melhorias</b><span>entregues em sistemas críticos, sem parar a operação</span></div>
+          <div class="who__cred"><b>2 SaaS</b><span>arquitetados do zero, um já em produção</span></div>
+        </div>
+        <div class="who__cta">
+          <a class="btn btn--ghost btn--sm" href="https://bryanrory.github.io" target="_blank" rel="noopener">Portfólio completo</a>
+          <a class="btn btn--ghost btn--sm" href="https://linkedin.com/in/bryan-rory" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTATO ===== -->
+  <section class="section shell" id="contato">
+    <div class="cta-final reveal">
+      <p class="eyebrow" style="justify-content:center">Próximo passo</p>
+      <h2>Me conta o que está acontecendo</h2>
+      <p>Um sistema com problema ou uma ideia que ainda não saiu do papel. Respondemos em até 24 horas úteis. Média real: 2 horas.</p>
+      <div class="hero__cta" style="justify-content:center">
+        <a class="btn btn--primary" href="https://wa.me/5547991633210" target="_blank" rel="noopener">Chamar no WhatsApp</a>
+        <a class="btn btn--ghost" href="mailto:comercial@rorysystems.com">Falar com especialista</a>
+      </div>
+    </div>
+
+    <div class="contact reveal">
+      <form id="contact-form" novalidate>
+        <!-- honeypot: campo invisível para bots. Humano nunca preenche. -->
+        <input type="text" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <div class="grid2">
+          <label class="field"><span>Nome</span><input type="text" name="nome" required placeholder="Seu nome" /></label>
+          <label class="field"><span>E-mail</span><input type="email" name="email" required placeholder="voce@empresa.com" /></label>
+          <label class="field"><span>WhatsApp</span><input type="tel" name="telefone" placeholder="(47) 99999-9999" /></label>
+          <label class="field"><span>Assunto</span>
+            <select name="assunto">
+              <option>Diagnóstico de sistema crítico</option>
+              <option>Sustentação de sistema existente</option>
+              <option>Novo produto ou SaaS</option>
+              <option>Site ou landing page</option>
+              <option>Outro</option>
+            </select>
+          </label>
+        </div>
+        <label class="field"><span>O que está acontecendo</span>
+          <textarea name="mensagem" rows="5" required placeholder="Qual sistema (ou ideia), qual sintoma, desde quando."></textarea>
+        </label>
+        <button class="btn btn--primary" type="submit" id="contact-submit">
+          <span class="btn-label">Enviar mensagem</span>
+        </button>
+        <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
+      </form>
+      <div>
+        <a class="chan" href="mailto:comercial@rorysystems.com">
+          <span class="chan__k">Comercial</span><b>comercial@rorysystems.com</b><small>Orçamento, escopo e proposta</small>
+        </a>
+        <a class="chan" href="mailto:ceo@rorysystems.com">
+          <span class="chan__k">Direto</span><b>ceo@rorysystems.com</b><small>Fala com quem assina a engenharia</small>
+        </a>
+        <a class="chan" href="https://wa.me/5547991633210" target="_blank" rel="noopener">
+          <span class="chan__k">WhatsApp</span><b>(47) 99163-3210</b><small>Seg–Sex, 9h às 18h</small>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="shell foot__in">
+    <span>© 2026 Rory Systems · Blumenau, SC</span>
+    <span>rorysystems.com</span>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
