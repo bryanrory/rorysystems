@@ -61,7 +61,7 @@ de 300 KB só para exibir texto estático.
 | Projeto | O que é |
 |---|---|
 | [EisenCare](https://www.eisencare.com) | SaaS de gestão para barbearias, multi-tenant por slug de URL |
-| [HogarSys](https://hogarsys.duckdns.org) | Gestão para estúdios de arquitetura e design |
+| [HogarSys](https://hogarsys.rorysystems.com) | Gestão para estúdios de arquitetura e design |
 | [M7 Marcenaria](https://www.m7marcenaria.com) | Site institucional com painel administrativo próprio |
 
 ## Contato
