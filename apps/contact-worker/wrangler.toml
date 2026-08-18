@@ -1,0 +1,57 @@
+# Worker que recebe o POST do formulário da landing e envia o e-mail pelo
+# SMTP da Brevo. Existe por um motivo só: credencial de SMTP não pode viver
+# no navegador. O site continua estático no GitHub Pages; só o envio passa
+# por aqui.
+#
+# Nada de segredo neste arquivo — ele é versionado. Usuário e chave do SMTP
+# entram por `wrangler secret put` (ver README.md).
+
+name = "rory-contact"
+main = "src/index.js"
+compatibility_date = "2026-08-04"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+# O domínio já está na Cloudflare, então o endpoint fica first-party em vez
+# de workers.dev. `custom_domain` faz o próprio deploy criar o registro DNS.
+[[routes]]
+pattern = "api.rorysystems.com"
+custom_domain = true
+
+[vars]
+SMTP_HOST = "smtp-relay.brevo.com"
+SMTP_PORT = "587"
+MAIL_FROM = "contato@rorysystems.com"
+MAIL_FROM_NAME = "Rory Systems — site"
+MAIL_TO = "comercial@rorysystems.com"
+ALLOWED_ORIGINS = "https://rorysystems.com,https://www.rorysystems.com"
+
+# --- Rate limiting em três camadas -----------------------------------------
+# Cada limitador precisa do seu próprio namespace_id. `period` só aceita
+# 10 ou 60 segundos.
+
+# 1) Por IP: trava o abusador óbvio, o script rodando de uma máquina só.
+[[unsafe.bindings]]
+name = "RL_IP"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 5, period = 60 }
+
+# 2) Global: teto do Worker inteiro. Botnet distribuída passa pelo limite
+#    por IP (cada nó manda pouco), mas não passa por este. É o que protege
+#    a cota da Brevo de virar prejuízo.
+[[unsafe.bindings]]
+name = "RL_GLOBAL"
+type = "ratelimit"
+namespace_id = "1002"
+simple = { limit = 60, period = 60 }
+
+# 3) Por e-mail informado: impede que o mesmo remetente inunde a caixa
+#    trocando de IP a cada envio.
+[[unsafe.bindings]]
+name = "RL_EMAIL"
+type = "ratelimit"
+namespace_id = "1003"
+simple = { limit = 3, period = 60 }

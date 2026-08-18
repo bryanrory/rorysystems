@@ -4,3 +4,12 @@ Thumbs.db
 .vscode/
 .idea/
 .claude/
+
+# Worker de contato: dependências, build local e — principalmente —
+# credenciais. .dev.vars guarda usuário/chave do SMTP no desenvolvimento
+# local e NUNCA pode ser versionado.
+node_modules/
+.wrangler/
+.dev.vars
+.dev.vars.*
+!.dev.vars.example

@@ -26,17 +26,19 @@ Sediada em Blumenau, SC. Atendimento remoto para todo o Brasil.
 ## Este repositório
 
 Guarda os produtos digitais da Rory Systems, organizados como um monorepo em
-`apps/`. Hoje só existe a landing page; a estrutura já está pronta para
-receber outros projetos do mesmo domínio. O próximo é um app de gestão dos
-próprios projetos da empresa.
+`apps/`. Hoje existem a landing page e o Worker que atende seu formulário
+de contato; a estrutura já está pronta para receber outros projetos do
+mesmo domínio. O próximo é um app de gestão dos próprios projetos da
+empresa.
 
 ```
 apps/
-└── landing/            → site institucional (rorysystems.com)
-    ├── index.html
-    ├── style.css
-    ├── script.js
-    └── assets/
+├── landing/            → site institucional (rorysystems.com)
+│   ├── index.html
+│   ├── style.css
+│   ├── script.js
+│   └── assets/
+└── contact-worker/     → envio do formulário (Cloudflare Worker + SMTP Brevo)
 ```
 
 ## A landing page

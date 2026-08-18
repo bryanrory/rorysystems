@@ -1,0 +1,36 @@
+#!/bin/sh
+# Bloqueia commit que carregue credencial. O repositório é público: um
+# segredo que entra aqui está exposto no segundo seguinte, e reescrever
+# histórico depois não desfaz quem já clonou.
+#
+# Ativação (uma vez por clone):  git config core.hooksPath .githooks
+
+falhou=0
+alerta() { echo "BLOQUEADO: $1"; falhou=1; }
+
+# 1) Arquivos que nunca devem ser versionados, mesmo que o .gitignore falhe.
+for arquivo in $(git diff --cached --name-only --diff-filter=ACM); do
+  case "$arquivo" in
+    *.dev.vars|.env|*/.env|*.env.local|*.pem|*.key|*id_rsa*)
+      alerta "$arquivo — arquivo de credencial no stage" ;;
+  esac
+done
+
+# 2) Padrões de segredo no conteúdo que está sendo commitado.
+#    Os exemplos com reticências do .dev.vars.example passam de propósito.
+padroes='xsmtpsib-[A-Za-z0-9]{20,}|xkeysib-[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|sk_live_[0-9a-zA-Z]{20,}|ghp_[0-9a-zA-Z]{36}|github_pat_[0-9a-zA-Z_]{50,}|BEGIN [A-Z ]*PRIVATE KEY'
+
+achados=$(git diff --cached -U0 | grep -E "^\+" | grep -E "$padroes" | head -5)
+if [ -n "$achados" ]; then
+  alerta "conteúdo com padrão de credencial:"
+  echo "$achados" | sed 's/^/    /'
+fi
+
+if [ "$falhou" -eq 1 ]; then
+  echo
+  echo "Tire o segredo do commit. Se for configuração do Worker, o lugar dela"
+  echo "é 'wrangler secret put', não o repositório."
+  echo "Para um falso positivo consciente: git commit --no-verify"
+  exit 1
+fi
+exit 0

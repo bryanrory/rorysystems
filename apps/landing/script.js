@@ -83,55 +83,78 @@
   }
 
   /* ---- formulário de contato ---------------------------------------------- */
-  /* Web3Forms: serviço sem backend próprio — a chave pública abaixo é
-     placeholder. Trocar por uma chave real gerada em web3forms.com com o
-     e-mail comercial@rorysystems.com antes de publicar. Até lá o formulário
-     ainda funciona: o WhatsApp e os links de e-mail no bloco de canais
-     cobrem o contato. */
-  var WEB3FORMS_ACCESS_KEY = 'SUBSTITUIR_PELA_CHAVE_WEB3FORMS';
+  /* O envio passa por um Worker na Cloudflare (apps/contact-worker), que fala
+     com o SMTP da Brevo. A URL abaixo é pública de propósito: quem protege o
+     endpoint é o CORS, o rate limit por IP e o honeypot, tudo do lado de lá.
+     Credencial de SMTP nenhuma chega até aqui. */
+  var CONTACT_ENDPOINT = 'https://api.rorysystems.com/contato';
+
+  /* Turnstile (CAPTCHA invisível da Cloudflare) fica desligado enquanto esta
+     chave estiver vazia — o Worker só passa a exigir o token quando o secret
+     correspondente for gravado lá. Para ligar: cole a site key aqui e rode
+     `wrangler secret put TURNSTILE_SECRET`. */
+  var TURNSTILE_SITEKEY = '';
 
   var form = document.getElementById('contact-form');
   var msg = document.getElementById('form-msg');
   var submitBtn = document.getElementById('contact-submit');
 
   if (form) {
+    var caixaTurnstile = null;
+
+    if (TURNSTILE_SITEKEY) {
+      caixaTurnstile = document.createElement('div');
+      caixaTurnstile.className = 'cf-turnstile';
+      caixaTurnstile.setAttribute('data-sitekey', TURNSTILE_SITEKEY);
+      submitBtn.parentNode.insertBefore(caixaTurnstile, submitBtn);
+      var s = document.createElement('script');
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+      s.async = true;
+      s.defer = true;
+      document.head.appendChild(s);
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
       if (form.botcheck && form.botcheck.value) return; // honeypot acionado
 
-      if (WEB3FORMS_ACCESS_KEY.indexOf('SUBSTITUIR') === 0) {
-        msg.textContent = 'Formulário ainda não configurado. Use o WhatsApp ou o e-mail ao lado, por favor.';
-        msg.className = 'form-msg is-err';
-        return;
-      }
+      var dados = {};
+      new FormData(form).forEach(function (valor, chave) { dados[chave] = valor; });
 
-      var dados = new FormData(form);
-      dados.append('access_key', WEB3FORMS_ACCESS_KEY);
-      dados.append('subject', 'Novo contato — Rory Systems');
-      dados.append('from_name', 'rorysystems.com');
+      if (caixaTurnstile) {
+        var campo = caixaTurnstile.querySelector('[name="cf-turnstile-response"]');
+        dados.turnstile = campo ? campo.value : '';
+      }
 
       submitBtn.disabled = true;
       msg.textContent = 'Enviando...';
       msg.className = 'form-msg';
 
-      fetch('https://api.web3forms.com/submit', {
+      fetch(CONTACT_ENDPOINT, {
         method: 'POST',
-        headers: { Accept: 'application/json' },
-        body: dados,
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(dados),
       })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          if (data.success) {
+        .then(function (r) {
+          return r.json().then(function (data) { return { ok: r.ok, data: data }; });
+        })
+        .then(function (res) {
+          if (res.ok && res.data.success) {
             form.reset();
+            if (window.turnstile && caixaTurnstile) window.turnstile.reset();
             msg.textContent = 'Mensagem enviada. Respondemos em até 24 horas úteis.';
             msg.className = 'form-msg is-ok';
           } else {
-            throw new Error(data.message || 'Falha no envio');
+            throw new Error(res.data.message || 'Falha no envio');
           }
         })
-        .catch(function () {
-          msg.textContent = 'Falha ao enviar. Tente novamente ou use o WhatsApp ao lado.';
+        .catch(function (erro) {
+          /* Mensagem do servidor (e-mail inválido, rate limit) é útil para o
+             visitante; falha de rede não é, então cai no texto genérico. */
+          msg.textContent = erro && erro.message && erro.message !== 'Failed to fetch'
+            ? erro.message
+            : 'Falha ao enviar. Tente novamente ou use o WhatsApp ao lado.';
           msg.className = 'form-msg is-err';
         })
         .finally(function () {

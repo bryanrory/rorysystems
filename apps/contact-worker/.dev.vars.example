@@ -1,0 +1,6 @@
+# Copie para .dev.vars (ignorado pelo git) para rodar `wrangler dev` local.
+# Em produção estes dois valores entram como secret na Cloudflare, não aqui:
+#   wrangler secret put SMTP_USER
+#   wrangler secret put SMTP_PASS
+SMTP_USER="xxxxxxxxx@smtp-brevo.com"
+SMTP_PASS="xsmtpsib-..."
