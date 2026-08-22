@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="pt-BR" class="no-js">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+/* Mesmo script bloqueante da home: resolve o tema antes da primeira pintura.
+   Precisa estar duplicado aqui (e não em script.js) justamente por ser
+   bloqueante e vir antes do CSS — um arquivo externo chegaria tarde demais e a
+   página piscaria o tema errado. Ordem: escolha salva > tema do sistema >
+   escuro. A chave 'rs-theme' é a mesma, então a preferência atravessa as duas
+   páginas. */
+(function(){
+  var root = document.documentElement;
+  var meta = document.querySelector('meta[name="theme-color"]');
+  function aplicar(tema){
+    root.setAttribute('data-theme', tema);
+    if (meta) meta.setAttribute('content', tema === 'light' ? '#FFFFFF' : '#0A0C10');
+  }
+  var salvo = null;
+  try { salvo = localStorage.getItem('rs-theme'); } catch (e) {}
+  if (salvo === 'light' || salvo === 'dark') { aplicar(salvo); }
+  else {
+    var sistemaClaro = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    aplicar(sistemaClaro ? 'light' : 'dark');
+  }
+})();
+</script>
+<title>Deixe seu depoimento | Rory Systems</title>
+<meta name="description" content="Formulário de depoimento para clientes da Rory Systems." />
+<!-- noindex de propósito: é um formulário enviado a clientes específicos, não
+     conteúdo de busca. Por isso também fica fora do sitemap.xml. O robots.txt
+     continua liberando o rastreamento — um Disallow impediria o robô de chegar
+     até aqui e ler justamente este noindex. -->
+<meta name="robots" content="noindex, follow" />
+<link rel="canonical" href="https://www.rorysystems.com/feedback/" />
+
+<link rel="icon" href="/assets/logo/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" href="/assets/logo/icon.png" />
+<link rel="apple-touch-icon" href="/assets/logo/icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<meta name="theme-color" content="#0A0C10" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=IBM+Plex+Mono:wght@500;600&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <linearGradient id="rs-grad" x1="0" y1="64" x2="64" y2="0">
+      <stop offset="0" stop-color="#2C4A7C"/><stop offset="1" stop-color="#3ED6E0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- Header enxuto: quem chega aqui veio por um link direto para preencher o
+     formulário. Menu de seções da home só ofereceria saída no meio da tarefa. -->
+<header class="bar">
+  <div class="bar__in">
+    <a class="brand" href="../">
+      <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M18,44 L34,24 L50,44" fill="none" stroke="url(#rs-grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect class="brand-mark-edge" x="10" y="36" width="16" height="16" rx="4" stroke="url(#rs-grad)" stroke-width="2.5"/>
+        <rect x="26" y="16" width="16" height="16" rx="4" fill="url(#rs-grad)"/>
+        <rect class="brand-mark-edge" x="42" y="36" width="16" height="16" rx="4" stroke="url(#rs-grad)" stroke-width="2.5"/>
+        <circle class="brand-mark-dot" cx="42" cy="18" r="3"/>
+      </svg>
+      <span class="brand__w"><span class="brand__r">Rory</span><span class="brand__s">SYSTEMS</span></span>
+    </a>
+    <a class="btn btn--ghost btn--sm" href="../">Voltar ao site</a>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Alternar para tema claro">
+      <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"/></svg>
+      <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="conteudo" class="page shell page-narrow">
+
+  <div class="page__head reveal">
+    <p class="eyebrow">Depoimento</p>
+    <h1>Sua avaliação sobre a Rory Systems</h1>
+    <p class="lede">
+      Seu depoimento nos ajuda a evoluir e mostra a outras empresas o impacto
+      da nossa engenharia.
+    </p>
+  </div>
+
+  <!-- novalidate pelo mesmo motivo do formulário de contato: a validação que
+       vale é a do Worker, e a nativa do navegador só atrapalharia com balões
+       fora do design. Os campos mantêm required para leitor de tela. -->
+  <form id="feedback-form" class="reveal" novalidate>
+    <!-- honeypot: campo invisível para bots. Humano nunca preenche. -->
+    <input type="text" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+    <div class="fieldset" role="group" aria-labelledby="grupo-identificacao">
+      <p class="fieldset__t" id="grupo-identificacao">Identificação</p>
+      <div class="grid2">
+        <label class="field field--req"><span>Nome completo</span>
+          <input type="text" name="nome" required autocomplete="name" placeholder="Seu nome" />
+        </label>
+        <label class="field field--req"><span>Cargo / Função</span>
+          <input type="text" name="cargo" required autocomplete="organization-title" placeholder="CTO, Diretor de Operações, Fundador…" />
+        </label>
+        <label class="field field--req"><span>Empresa ou Projeto</span>
+          <input type="text" name="empresa" required autocomplete="organization" placeholder="Nome da empresa ou do projeto" />
+        </label>
+        <label class="field field--req"><span>Tipo de serviço contratado</span>
+          <select name="servico" required>
+            <option value="Sustentação de Sistemas">Sustentação de Sistemas</option>
+            <option value="Desenvolvimento de Novo Produto">Desenvolvimento de Novo Produto</option>
+            <option value="Site / Landing Page de Conversão">Site / Landing Page de Conversão</option>
+          </select>
+        </label>
+      </div>
+
+      <label class="field"><span>E-mail para contato</span>
+        <input type="email" name="email" autocomplete="email" placeholder="voce@empresa.com" />
+        <small class="field__hint">Opcional. Serve só para confirmarmos o depoimento com você antes de publicar; não vai para o site.</small>
+      </label>
+
+      <label class="field"><span>URL da foto de perfil ou logo da empresa</span>
+        <input type="url" name="foto_url" inputmode="url" placeholder="https://…" />
+        <small class="field__hint">Opcional. Sem foto, o card usa as iniciais do seu nome.</small>
+      </label>
+    </div>
+
+    <div class="fieldset" role="group" aria-labelledby="grupo-experiencia">
+      <p class="fieldset__t" id="grupo-experiencia">Sua experiência</p>
+
+      <label class="field field--req"><span>O desafio inicial</span>
+        <textarea name="desafio" rows="4" required placeholder="Qual era o principal problema ou risco no seu sistema/operação antes da Rory Systems?"></textarea>
+      </label>
+
+      <label class="field field--req"><span>O resultado</span>
+        <textarea name="resultado" rows="4" required placeholder="Qual foi o impacto ou resultado prático percebido após nossa atuação?"></textarea>
+      </label>
+
+      <label class="field field--req"><span>Depoimento geral</span>
+        <textarea name="depoimento" id="feedback-quote" rows="4" required maxlength="300" placeholder="Em poucas frases, como você resumiria a experiência de trabalhar conosco?"></textarea>
+        <small class="counter" id="feedback-counter" aria-live="polite">0 / 300 caracteres</small>
+      </label>
+    </div>
+
+    <div class="fieldset" role="group" aria-labelledby="grupo-autorizacao">
+      <p class="fieldset__t" id="grupo-autorizacao">Autorização de divulgação</p>
+      <label class="consent">
+        <input type="checkbox" name="autorizo" value="sim" />
+        <span>
+          <b>Autorizo a Rory Systems a divulgar este depoimento, meu nome, cargo e marca no site institucional e materiais de apresentação.</b>
+          <small>
+            Marcar é opcional. Sem esta autorização seu retorno chega apenas
+            para nós: continua valendo como avaliação do trabalho, e nem o
+            texto nem seu nome ou sua marca aparecem no site ou em qualquer
+            material.
+          </small>
+        </span>
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn--primary" type="submit" id="feedback-submit">
+        <span class="btn-label">Enviar depoimento</span>
+      </button>
+      <p class="form-msg" id="feedback-msg" role="status" aria-live="polite"></p>
+    </div>
+  </form>
+
+  <!-- Estado de sucesso: já vem no HTML e é só revelado, em vez de montado por
+       string no JavaScript. tabindex="-1" para o foco poder ir para cá depois
+       do envio, senão quem navega por teclado fica preso num formulário que
+       acabou de sumir. -->
+  <div class="form-done" id="feedback-done" tabindex="-1" hidden>
+    <div class="form-done__ic">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <h2>Obrigado pelo retorno!</h2>
+    <p>Seu depoimento foi recebido com sucesso.</p>
+    <a class="btn btn--ghost" href="../">Voltar para a home</a>
+  </div>
+
+</main>
+
+<footer class="foot">
+  <div class="shell foot__in">
+    <span>© 2026 Rory Systems · Blumenau, SC</span>
+    <span><a href="../">rorysystems.com</a></span>
+  </div>
+</footer>
+
+<!-- script.js da home: cuida do tema, da classe .js e da revelação em scroll.
+     Os blocos de menu, faixa de depoimentos e formulário de contato ficam
+     inertes aqui, porque cada um só roda se encontrar seus elementos. -->
+<script src="../script.js"></script>
+<script src="feedback.js"></script>
+</body>
+</html>

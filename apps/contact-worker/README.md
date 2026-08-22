@@ -1,7 +1,12 @@
-# rory-contact — endpoint do formulário
+# rory-contact — endpoint dos formulários
 
-Worker da Cloudflare que recebe o POST do formulário da landing e envia o
-e-mail pelo SMTP da Brevo. Responde em `https://api.rorysystems.com/contato`.
+Worker da Cloudflare que atende os formulários da landing, em
+`https://api.rorysystems.com`. Duas rotas:
+
+| Rota | Vem de | O que faz |
+|---|---|---|
+| `POST /` ou `/contato` | formulário de contato da home | envia e-mail para `comercial@` pelo SMTP da Brevo |
+| `POST /feedback` | formulário de depoimento em `/feedback` | grava no D1 e notifica `ceo@` |
 
 ## Por que ele existe
 
@@ -11,14 +16,20 @@ conexão SMTP, e mesmo que abrisse a chave da Brevo estaria legível em
 que enxerga a credencial, e ela fica em **secret da Cloudflare**, fora do
 repositório.
 
+O depoimento tem um motivo a mais para não terminar numa caixa de entrada: ele
+passa por curadoria antes de virar card na home e precisa registrar quem
+autorizou a divulgação. Isso é consulta com estado, não e-mail — daí o D1.
+
 ## Camadas de proteção
 
 As checagens rodam em ordem de custo crescente, então um flood é rejeitado
-antes de chegar na parte cara (rate limit, Turnstile, SMTP):
+antes de chegar na parte cara (rate limit, Turnstile, banco, SMTP). Elas valem
+para as duas rotas: ficam antes do despacho, de propósito, para que endpoint
+novo nasça protegido sem ninguém precisar lembrar de repetir nada.
 
 | Camada | O que faz |
 |---|---|
-| Método e rota | Só `POST` em `/` ou `/contato`; o resto é 404/405 |
+| Método e rota | Só `POST` em `/`, `/contato` ou `/feedback`; o resto é 404/405 |
 | Origem | Allowlist estrita via `ALLOWED_ORIGINS`; sem match, 403 |
 | Content-Type | Exige `application/json`, o que força o preflight CORS |
 | Tamanho | Corta acima de 16 KB, por `Content-Length` e pelo corpo real |
@@ -51,6 +62,14 @@ npx wrangler secret put SMTP_USER   # login SMTP da Brevo (…@smtp-brevo.com)
 npx wrangler secret put SMTP_PASS   # a chave xsmtpsib-…
 ```
 
+Crie o banco dos depoimentos e aplique a migration:
+
+```bash
+npx wrangler d1 create rory-depoimentos     # copie o database_id da saída
+#   cole em [[d1_databases]] → database_id, no wrangler.toml
+npm run migrate                             # aplica migrations/ no banco remoto
+```
+
 Publique:
 
 ```bash
@@ -72,12 +91,50 @@ configurado. Para ativar:
 
 A partir daí o Worker rejeita qualquer envio sem token válido.
 
+## Os depoimentos no D1
+
+Tabela `depoimentos` (ver `migrations/0001_depoimentos.sql`). Duas colunas
+carregam a regra e são independentes de propósito:
+
+- **`autorizado`** (0/1) — o que a *pessoa* permitiu. Sem `1` aqui, o depoimento
+  nunca pode ir ao site, aconteça o que acontecer do nosso lado.
+- **`status`** (`pendente` | `aprovado` | `recusado`) — o que *nós* decidimos.
+  Um depoimento autorizado ainda passa por curadoria.
+
+Publicável = `autorizado = 1` **e** `status = 'aprovado'`. Uma coluna só
+misturaria consentimento com curadoria, e a primeira aprovação distraída
+publicaria o que não podia.
+
+O que já chegou e ainda não foi olhado:
+
+```bash
+npx wrangler d1 execute rory-depoimentos --remote \
+  --command "SELECT id, criado_em, nome, empresa, servico, autorizado
+             FROM depoimentos WHERE status='pendente' ORDER BY criado_em DESC;"
+```
+
+Aprovar um depoimento (só faz sentido se `autorizado = 1`):
+
+```bash
+npx wrangler d1 execute rory-depoimentos --remote \
+  --command "UPDATE depoimentos SET status='aprovado' WHERE id=1 AND autorizado=1;"
+```
+
+Aprovar no banco **não** publica nada sozinho: o card da home sai de
+`content/testimonials.json`, que é editado à mão e gerado com
+`node tools/build-testimonials.mjs`. O banco é a fila de curadoria; o JSON é o
+que está no ar.
+
 ## Configuração não secreta
 
 Fica em `[vars]` no `wrangler.toml`, versionada por ser pública:
-`SMTP_HOST`, `SMTP_PORT`, `MAIL_FROM`, `MAIL_FROM_NAME`, `MAIL_TO` e
-`ALLOWED_ORIGINS`. Para trocar o destinatário, edite `MAIL_TO` e refaça o
-deploy.
+`SMTP_HOST`, `SMTP_PORT`, `MAIL_FROM`, `MAIL_FROM_NAME`, `MAIL_TO`,
+`MAIL_TO_FEEDBACK` e `ALLOWED_ORIGINS`. Para trocar o destinatário do contato,
+edite `MAIL_TO`; o do depoimento é `MAIL_TO_FEEDBACK`. Depois, deploy.
+
+O `database_id` do D1 também mora ali. Ele não é segredo (sem credencial da
+conta não serve de nada), mas enquanto estiver vazio o `/feedback` responde
+503 de propósito — mesmo comportamento de quando faltam os secrets do SMTP.
 
 ## Desenvolvimento local
 
@@ -94,6 +151,8 @@ depois.
 
 ## Verificar um envio
 
+Contato:
+
 ```bash
 curl -i https://api.rorysystems.com/contato \
   -H 'Origin: https://rorysystems.com' \
@@ -101,5 +160,21 @@ curl -i https://api.rorysystems.com/contato \
   -d '{"nome":"Teste","email":"voce@exemplo.com","mensagem":"ping do curl"}'
 ```
 
-Esperado: `HTTP/2 200` com `{"success":true}`. Logs ao vivo com
-`npx wrangler tail`.
+Depoimento:
+
+```bash
+curl -i https://api.rorysystems.com/feedback \
+  -H 'Origin: https://rorysystems.com' \
+  -H 'Content-Type: application/json' \
+  -d '{"nome":"Teste da Silva","cargo":"CTO","empresa":"Empresa Teste",
+       "servico":"Sustentação de Sistemas","email":"voce@exemplo.com",
+       "desafio":"ping do curl","resultado":"ping do curl",
+       "depoimento":"Depoimento de teste enviado pelo curl.","autorizo":false}'
+```
+
+Esperado nos dois: `HTTP/2 200` com `{"success":true}`. Logs ao vivo com
+`npx wrangler tail`. O depoimento de teste fica no banco — apague depois com
+`DELETE FROM depoimentos WHERE id=…`.
+
+Se `/feedback` responder 503, o `database_id` no `wrangler.toml` está vazio ou
+a migration não foi aplicada; `npx wrangler tail` diz qual dos dois.

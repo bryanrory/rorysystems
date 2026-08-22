@@ -105,6 +105,7 @@
       <a href="#servicos">Serviços</a>
       <a href="#metodo">Método</a>
       <a href="#casos">Casos</a>
+      <a href="#depoimentos">Depoimentos</a>
       <a href="#autoridade">Sobre</a>
     </nav>
     <a class="btn btn--primary btn--sm nav-cta" href="#contato">Falar com especialista</a>
@@ -120,6 +121,7 @@
     <a href="#servicos">Serviços</a>
     <a href="#metodo">Método</a>
     <a href="#casos">Casos</a>
+    <a href="#depoimentos">Depoimentos</a>
     <a href="#autoridade">Sobre</a>
     <a class="btn btn--primary" href="#contato">Falar com especialista</a>
   </div>
@@ -369,6 +371,125 @@
         </div>
       </a>
     </div>
+  </section>
+
+  <!-- ===== DEPOIMENTOS ===== -->
+  <!-- Os cards entre os marcadores rs:testimonials são GERADOS a partir de
+       content/testimonials.json. Não edite este bloco à mão: mexa no JSON e
+       rode `node tools/build-testimonials.mjs`. O HTML fica versionado (e não
+       montado no cliente) porque prova social é exatamente o conteúdo que
+       precisa ser indexado e continuar legível sem JavaScript. -->
+  <section class="section shell" id="depoimentos">
+    <div class="section__head reveal">
+      <p class="eyebrow">Prova social</p>
+      <h2 class="section__title">O que dizem quem confia a operação à Rory Systems</h2>
+      <p class="lede">
+        Quem já teve o problema resolvido conta o que mudou: o risco que
+        existia antes e o resultado depois.
+      </p>
+    </div>
+
+    <div class="voices reveal">
+      <!-- Faixa de uma linha só, que rola na horizontal em vez de quebrar em
+           duas. Sem JavaScript continua arrastável por toque e trackpad, e o
+           tabindex a torna rolável pelo teclado; as setas de paginação são
+           enfeite opcional por cima disso, não o único jeito de navegar. -->
+      <div class="voices__track" id="voices-track" tabindex="0" role="region" aria-label="Depoimentos de clientes">
+        <!-- rs:testimonials:start -->
+        <article class="voice">
+          <p class="voice__badge">Sustentação de Sistemas</p>
+          <header class="voice__head">
+            <span class="voice__ava" aria-hidden="true">MA</span>
+            <div>
+              <p class="voice__n">Marcelo Andrade</p>
+              <p class="voice__r">Diretor de Operações · Metalúrgica Vale Norte</p>
+            </div>
+          </header>
+          <blockquote class="voice__q">Nosso ERP em Delphi travava o faturamento toda virada de mês e ninguém mais entendia o código. A Rory Systems leu o sistema antes de mexer, corrigiu a causa e deixou tudo documentado. Parou de ser um risco que só eu perdia o sono.</blockquote>
+          <p class="voice__res"><span>Resultado</span>Faturamento sem parada há 14 meses</p>
+        </article>
+        <article class="voice">
+          <p class="voice__badge">Desenvolvimento de Novo Produto</p>
+          <header class="voice__head">
+            <span class="voice__ava" aria-hidden="true">JP</span>
+            <div>
+              <p class="voice__n">Juliana Prado</p>
+              <p class="voice__r">Fundadora · EisenCare</p>
+            </div>
+          </header>
+          <blockquote class="voice__q">Eu tinha a operação na cabeça e nada no papel. Saímos do primeiro diagrama para um SaaS multi-tenant em produção, com clientes pagantes, sem nenhuma reescrita no meio do caminho.</blockquote>
+          <p class="voice__res"><span>Resultado</span>Primeira versão no ar em 45 dias</p>
+        </article>
+        <article class="voice">
+          <p class="voice__badge">Sustentação de Sistemas</p>
+          <header class="voice__head">
+            <span class="voice__ava" aria-hidden="true">RB</span>
+            <div>
+              <p class="voice__n">Rafael Bittencourt</p>
+              <p class="voice__r">CTO · Credix Serviços Financeiros</p>
+            </div>
+          </header>
+          <blockquote class="voice__q">A integração de CNAB com o banco quebrava a cada layout novo e a conciliação atrasava dias. Hoje o processo roda sozinho e a gente só olha o relatório. O escopo escrito antes de começar foi o que evitou surpresa.</blockquote>
+          <p class="voice__res"><span>Resultado</span>Conciliação de 3 dias para 40 minutos</p>
+        </article>
+        <article class="voice">
+          <p class="voice__badge">Desenvolvimento de Novo Produto</p>
+          <header class="voice__head">
+            <span class="voice__ava" aria-hidden="true">CR</span>
+            <div>
+              <p class="voice__n">Camila Rezende</p>
+              <p class="voice__r">Sócia-diretora · Estúdio Rezende Arquitetura</p>
+            </div>
+          </header>
+          <blockquote class="voice__q">Controlávamos projetos, honorários e clientes em três planilhas que nunca batiam. Ganhamos um sistema só, com as fases do projeto do jeito que a gente realmente trabalha, não do jeito que um software genérico acha que deveria.</blockquote>
+          <p class="voice__res"><span>Resultado</span>Três planilhas viraram um sistema</p>
+        </article>
+        <article class="voice">
+          <p class="voice__badge">Site / Landing Page de Conversão</p>
+          <header class="voice__head">
+            <span class="voice__ava" aria-hidden="true">TM</span>
+            <div>
+              <p class="voice__n">Tiago Menezes</p>
+              <p class="voice__r">Proprietário · M7 Marcenaria</p>
+            </div>
+          </header>
+          <blockquote class="voice__q">O site antigo demorava para abrir e não trazia orçamento nenhum. O novo carrega na hora e ainda posso publicar os ambientes sozinho, sem depender de ninguém. O telefone passou a tocar por causa dele.</blockquote>
+          <p class="voice__res"><span>Resultado</span>3x mais pedidos de orçamento</p>
+        </article>
+        <article class="voice">
+          <p class="voice__badge">Sustentação de Sistemas</p>
+          <header class="voice__head">
+            <span class="voice__ava" aria-hidden="true">SK</span>
+            <div>
+              <p class="voice__n">Simone Kraus</p>
+              <p class="voice__r">Gerente de TI · Rede Bonavita</p>
+            </div>
+          </header>
+          <blockquote class="voice__q">Herdei um sistema de vinte anos sem documentação e com um fornecedor que sumiu. Em vez de vender uma reescrita, apontaram o que dava para salvar e o que precisava sair. Foi a primeira consultoria que me disse o que eu não precisava comprar.</blockquote>
+          <p class="voice__res"><span>Resultado</span>SLA mantido em 99,9%</p>
+        </article>
+        <!-- rs:testimonials:end -->
+      </div>
+
+      <div class="voices__nav" id="voices-nav" hidden>
+        <button class="voices__btn" type="button" data-dir="-1" aria-label="Ver depoimentos anteriores" aria-controls="voices-track">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <p class="voices__pos num" id="voices-pos" role="status" aria-live="polite"></p>
+        <button class="voices__btn" type="button" data-dir="1" aria-label="Ver próximos depoimentos" aria-controls="voices-track">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <p class="voices__cta">
+      Já trabalhamos juntos? <a href="feedback/">Deixe seu depoimento →</a>
+    </p>
+
+    <!-- rs:testimonials-jsonld:start -->
+      <!-- Sem depoimentos reais aprovados ainda: nenhum dado estruturado de Review é
+           emitido enquanto todas as entradas forem mock. Ver tools/build-testimonials.mjs. -->
+    <!-- rs:testimonials-jsonld:end -->
   </section>
 
   <!-- ===== STACK: a prova visual da dualidade ===== -->

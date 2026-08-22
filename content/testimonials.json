@@ -1,0 +1,96 @@
+{
+  "_leia_antes_de_editar": [
+    "Fonte da verdade dos depoimentos exibidos na home. Este arquivo NÃO é",
+    "publicado: o workflow do GitHub Pages sobe apenas apps/landing. Depois de",
+    "editar, rode `node tools/build-testimonials.mjs` para regravar o bloco",
+    "correspondente no apps/landing/index.html, e commite os dois juntos.",
+    "",
+    "ATENÇÃO: toda entrada abaixo tem \"mock\": true — são exemplos fictícios,",
+    "escritos só para a seção ter o que renderizar enquanto não existe",
+    "depoimento real aprovado. Depoimento inventado num site comercial engana",
+    "quem está avaliando uma contratação; troque por reais antes de publicar.",
+    "O gerador avisa no terminal enquanto houver mock, e não emite os dados",
+    "estruturados de Review para eles (marcação de review falsa é penalizada",
+    "pelo Google).",
+    "",
+    "Campos: id (slug único), nome, cargo, empresa, servico (um dos três tipos",
+    "do formulário de /feedback), foto (URL ou null → cai nas iniciais),",
+    "iniciais (2 letras), citacao (até 300 caracteres, igual ao formulário),",
+    "resultado (opcional, vira o box de destaque) e mock."
+  ],
+
+  "depoimentos": [
+    {
+      "id": "exemplo-industria-legado",
+      "nome": "Marcelo Andrade",
+      "cargo": "Diretor de Operações",
+      "empresa": "Metalúrgica Vale Norte",
+      "servico": "Sustentação de Sistemas",
+      "foto": null,
+      "iniciais": "MA",
+      "citacao": "Nosso ERP em Delphi travava o faturamento toda virada de mês e ninguém mais entendia o código. A Rory Systems leu o sistema antes de mexer, corrigiu a causa e deixou tudo documentado. Parou de ser um risco que só eu perdia o sono.",
+      "resultado": "Faturamento sem parada há 14 meses",
+      "mock": true
+    },
+    {
+      "id": "exemplo-saas-barbearias",
+      "nome": "Juliana Prado",
+      "cargo": "Fundadora",
+      "empresa": "EisenCare",
+      "servico": "Desenvolvimento de Novo Produto",
+      "foto": null,
+      "iniciais": "JP",
+      "citacao": "Eu tinha a operação na cabeça e nada no papel. Saímos do primeiro diagrama para um SaaS multi-tenant em produção, com clientes pagantes, sem nenhuma reescrita no meio do caminho.",
+      "resultado": "Primeira versão no ar em 45 dias",
+      "mock": true
+    },
+    {
+      "id": "exemplo-financeiro-integracao",
+      "nome": "Rafael Bittencourt",
+      "cargo": "CTO",
+      "empresa": "Credix Serviços Financeiros",
+      "servico": "Sustentação de Sistemas",
+      "foto": null,
+      "iniciais": "RB",
+      "citacao": "A integração de CNAB com o banco quebrava a cada layout novo e a conciliação atrasava dias. Hoje o processo roda sozinho e a gente só olha o relatório. O escopo escrito antes de começar foi o que evitou surpresa.",
+      "resultado": "Conciliação de 3 dias para 40 minutos",
+      "mock": true
+    },
+    {
+      "id": "exemplo-arquitetura-gestao",
+      "nome": "Camila Rezende",
+      "cargo": "Sócia-diretora",
+      "empresa": "Estúdio Rezende Arquitetura",
+      "servico": "Desenvolvimento de Novo Produto",
+      "foto": null,
+      "iniciais": "CR",
+      "citacao": "Controlávamos projetos, honorários e clientes em três planilhas que nunca batiam. Ganhamos um sistema só, com as fases do projeto do jeito que a gente realmente trabalha, não do jeito que um software genérico acha que deveria.",
+      "resultado": "Três planilhas viraram um sistema",
+      "mock": true
+    },
+    {
+      "id": "exemplo-marcenaria-site",
+      "nome": "Tiago Menezes",
+      "cargo": "Proprietário",
+      "empresa": "M7 Marcenaria",
+      "servico": "Site / Landing Page de Conversão",
+      "foto": null,
+      "iniciais": "TM",
+      "citacao": "O site antigo demorava para abrir e não trazia orçamento nenhum. O novo carrega na hora e ainda posso publicar os ambientes sozinho, sem depender de ninguém. O telefone passou a tocar por causa dele.",
+      "resultado": "3x mais pedidos de orçamento",
+      "mock": true
+    },
+    {
+      "id": "exemplo-varejo-modernizacao",
+      "nome": "Simone Kraus",
+      "cargo": "Gerente de TI",
+      "empresa": "Rede Bonavita",
+      "servico": "Sustentação de Sistemas",
+      "foto": null,
+      "iniciais": "SK",
+      "citacao": "Herdei um sistema de vinte anos sem documentação e com um fornecedor que sumiu. Em vez de vender uma reescrita, apontaram o que dava para salvar e o que precisava sair. Foi a primeira consultoria que me disse o que eu não precisava comprar.",
+      "resultado": "SLA mantido em 99,9%",
+      "mock": true
+    }
+  ]
+}

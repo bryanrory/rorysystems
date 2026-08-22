@@ -1,7 +1,8 @@
-# Worker que recebe o POST do formulário da landing e envia o e-mail pelo
-# SMTP da Brevo. Existe por um motivo só: credencial de SMTP não pode viver
-# no navegador. O site continua estático no GitHub Pages; só o envio passa
-# por aqui.
+# Worker que recebe os POSTs dos formulários da landing: o contato da home
+# (envia e-mail pelo SMTP da Brevo) e o depoimento de /feedback (grava no D1 e
+# notifica por e-mail). Existe por um motivo só: credencial de SMTP não pode
+# viver no navegador. O site continua estático no GitHub Pages; só o envio
+# passa por aqui.
 #
 # Nada de segredo neste arquivo — ele é versionado. Usuário e chave do SMTP
 # entram por `wrangler secret put` (ver README.md).
@@ -26,7 +27,27 @@ SMTP_PORT = "587"
 MAIL_FROM = "contato@rorysystems.com"
 MAIL_FROM_NAME = "Rory Systems — site"
 MAIL_TO = "comercial@rorysystems.com"
+# Depoimento é curadoria de marca, não lead comercial: cai direto na caixa de
+# quem decide se vai para o site.
+MAIL_TO_FEEDBACK = "ceo@rorysystems.com"
 ALLOWED_ORIGINS = "https://rorysystems.com,https://www.rorysystems.com"
+
+# --- Banco dos depoimentos --------------------------------------------------
+# Guarda o que chega em /feedback. E-mail sozinho não serve aqui: depoimento
+# passa por curadoria, precisa de status e do registro de quem autorizou a
+# divulgação — coisas que não se consultam numa caixa de entrada.
+#
+# Antes do primeiro deploy (uma vez só):
+#   npx wrangler d1 create rory-depoimentos   → copie o database_id da saída
+#   cole abaixo, e então:  npm run migrate
+#
+# Enquanto o database_id estiver vazio, /feedback responde 503 de propósito —
+# mesmo comportamento de quando os secrets do SMTP faltam.
+[[d1_databases]]
+binding = "DB"
+database_name = "rory-depoimentos"
+database_id = ""
+migrations_dir = "migrations"
 
 # --- Rate limiting em três camadas -----------------------------------------
 # Cada limitador precisa do seu próprio namespace_id. `period` só aceita

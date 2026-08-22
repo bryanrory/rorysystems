@@ -26,10 +26,9 @@ Sediada em Blumenau, SC. Atendimento remoto para todo o Brasil.
 ## Este repositório
 
 Guarda os produtos digitais da Rory Systems, organizados como um monorepo em
-`apps/`. Hoje existem a landing page e o Worker que atende seu formulário
-de contato; a estrutura já está pronta para receber outros projetos do
-mesmo domínio. O próximo é um app de gestão dos próprios projetos da
-empresa.
+`apps/`. Hoje existem a landing page e o Worker que atende seus formulários;
+a estrutura já está pronta para receber outros projetos do mesmo domínio. O
+próximo é um app de gestão dos próprios projetos da empresa.
 
 ```
 apps/
@@ -37,9 +36,18 @@ apps/
 │   ├── index.html
 │   ├── style.css
 │   ├── script.js
+│   ├── feedback/       → /feedback: formulário de depoimento de cliente
 │   └── assets/
-└── contact-worker/     → envio do formulário (Cloudflare Worker + SMTP Brevo)
+└── contact-worker/     → formulários (Cloudflare Worker + D1 + SMTP Brevo)
+
+content/                → dados editáveis à mão que viram HTML da landing
+└── testimonials.json
+tools/                  → utilitários de manutenção do repositório
+└── build-testimonials.mjs
 ```
+
+`content/` e `tools/` ficam fora de `apps/landing` porque o deploy publica
+aquela pasta inteira: fonte de dados e ferramenta não precisam ir para o ar.
 
 ## A landing page
 
@@ -57,6 +65,25 @@ de 300 KB só para exibir texto estático.
 - **Progressive enhancement**: sem JavaScript, a página inteira continua
   legível e funcional; com JS, ganha menu mobile, revelação suave em scroll
   e envio assíncrono do formulário de contato.
+
+## Depoimentos
+
+Cliente registra o depoimento em [`/feedback`](https://www.rorysystems.com/feedback/):
+o que era problema antes, o resultado depois, a citação e — separadamente — se
+autoriza divulgar. O Worker grava tudo no D1 com `status = 'pendente'` e avisa
+`ceo@` por e-mail.
+
+Publicar é um segundo passo, deliberadamente manual: o depoimento aprovado
+entra em `content/testimonials.json` e vira HTML na home com
+
+```bash
+node tools/build-testimonials.mjs      # --check apenas verifica se está em dia
+```
+
+O HTML fica versionado em vez de ser montado no navegador porque prova social é
+exatamente o conteúdo que precisa ser indexado pelo Google e continuar legível
+sem JavaScript. Sem o passo do gerador, o site não passa a exibir nada sozinho —
+consentimento no banco não é permissão automática de publicação.
 
 ## Casos em produção
 

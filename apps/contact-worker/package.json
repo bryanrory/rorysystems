@@ -2,13 +2,15 @@
   "name": "rory-contact-worker",
   "version": "1.0.0",
   "private": true,
-  "description": "Endpoint de envio do formulário de contato da landing (SMTP Brevo via Cloudflare Workers).",
+  "description": "Endpoint dos formulários da landing: contato (SMTP Brevo) e depoimento (D1 + SMTP), via Cloudflare Workers.",
   "type": "module",
   "main": "src/index.js",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "tail": "wrangler tail"
+    "tail": "wrangler tail",
+    "migrate": "wrangler d1 migrations apply rory-depoimentos --remote",
+    "migrate:local": "wrangler d1 migrations apply rory-depoimentos --local"
   },
   "dependencies": {
     "worker-mailer": "^1.2.1"

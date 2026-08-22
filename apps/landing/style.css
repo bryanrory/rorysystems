@@ -424,6 +424,102 @@ img{ max-width:100%; display:block; }
 .case__p{ font-size:.875rem; color: var(--ink-dim); font-weight:400; margin-top:.5rem; }
 .case__a{ display:inline-block; margin-top: var(--s2); font-family: var(--font-mono); font-size:.6875rem; color: var(--cyan); }
 
+/* --- depoimentos ------------------------------------------------------------------ */
+
+/* Linha única em qualquer largura, por decisão de layout: a faixa rola na
+   horizontal em vez de quebrar numa segunda linha. Quantos cards cabem por vez
+   é o que muda entre breakpoints (1 → 2 → 3 → 4), e a largura do card sai dessa
+   conta — assim uma "página" da paginação é exatamente a largura visível, e a
+   seta avança um conjunto inteiro em vez de meio card.
+
+   A faixa é rolável por si só (toque, trackpad, teclado pelo tabindex). As
+   setas são conveniência por cima disso, não o único caminho: sem JavaScript
+   elas não aparecem e a seção continua inteira. */
+.voices{ position:relative; }
+
+.voices__track{
+  --voices-cols: 1;
+  display:grid; grid-auto-flow: column;
+  grid-auto-columns: calc((100% - (var(--voices-cols) - 1) * var(--s3)) / var(--voices-cols));
+  gap: var(--s3);
+  overflow-x:auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  /* Folga vertical para o -3px do hover e para o anel de foco não serem
+     recortados pelo overflow. */
+  padding-block:4px;
+  /* Sem barra de rolagem: quem tem JS usa as setas, quem não tem arrasta. Uma
+     barra nativa atravessada no meio da seção quebraria a linha visual. */
+  scrollbar-width:none;
+}
+.voices__track::-webkit-scrollbar{ display:none; }
+
+@media (min-width:44rem){ .voices__track{ --voices-cols: 2; } }
+@media (min-width:60rem){ .voices__track{ --voices-cols: 3; } }
+@media (min-width:76rem){ .voices__track{ --voices-cols: 4; } }
+
+.voice{
+  background: var(--bg-plate); border:1px solid var(--border); border-radius:14px;
+  padding: var(--s3); display:flex; flex-direction:column; gap:.7rem;
+  scroll-snap-align:start;
+  transition: border-color 220ms ease, transform 220ms ease;
+}
+.voice:hover{ border-color: var(--border-strong); transform: translateY(-3px); }
+
+/* flex-start, e não center: quando o nome quebra em duas linhas, o avatar
+   centralizado desce e desalinha com o card ao lado. */
+.voice__head{ display:flex; align-items:flex-start; gap:.7rem; }
+.voice__ava{
+  flex:none; width:44px; height:44px; border-radius:10px; overflow:hidden;
+  background: var(--bg-alt); border:1px solid var(--border-strong);
+  display:grid; place-items:center;
+  font-family: var(--font-mono); font-size:.8125rem; font-weight:600; color: var(--cyan);
+}
+.voice__ava img{ width:100%; height:100%; object-fit:cover; }
+.voice__n{ font-size:.9375rem; font-weight:700; letter-spacing:-.01em; line-height:1.25; }
+.voice__r{ font-size:.75rem; color: var(--ink-faint); line-height:1.35; margin-top:.15rem; }
+.voice__badge{ font-family: var(--font-mono); font-size:.5625rem; letter-spacing:.1em; text-transform:uppercase; color: var(--mint); }
+
+/* A citação é a única fala de outra pessoa na página inteira; herda a serifa
+   que o projeto já reserva para fala, a mesma de .pledge__quote. */
+.voice__q{
+  margin:0; font-family: var(--font-display); font-style:italic; font-weight:400;
+  font-size:1rem; line-height:1.45; color: var(--ink); letter-spacing:0;
+}
+.voice__q::before{ content:'“'; }
+.voice__q::after{ content:'”'; }
+
+/* margin-top:auto empurra o resultado para o rodapé do card: com citações de
+   comprimentos diferentes, os boxes ficam alinhados entre si na faixa. */
+.voice__res{
+  margin-top:auto; padding:.55rem .7rem; border-radius:8px;
+  background: rgba(78,220,160,.08); border:1px solid rgba(78,220,160,.25);
+  font-size:.8125rem; font-weight:600; color: var(--ink); line-height:1.3;
+}
+.voice__res span{
+  display:block; font-family: var(--font-mono); font-size:.5625rem; letter-spacing:.1em;
+  text-transform:uppercase; color: var(--mint); font-weight:600; margin-bottom:.15rem;
+}
+
+.voices__nav{ display:none; align-items:center; justify-content:flex-end; gap:.6rem; margin-top: var(--s3); }
+.js .voices__nav{ display:flex; }
+/* Precisa vir depois da regra acima: mesma especificidade, e é o JS que marca
+   [hidden] quando todos os depoimentos já cabem na tela sem paginar. */
+.voices__nav[hidden]{ display:none; }
+.voices__btn{
+  width:40px; height:40px; flex:none; border-radius:8px;
+  border:1px solid var(--border-control); background:transparent; color: var(--ink-dim);
+  display:grid; place-items:center; cursor:pointer;
+  transition: border-color 160ms ease, color 160ms ease, opacity 160ms ease;
+}
+.voices__btn:hover:not(:disabled){ border-color: var(--cyan); color: var(--cyan); }
+.voices__btn:disabled{ opacity:.35; cursor:not-allowed; }
+.voices__btn svg{ width:18px; height:18px; }
+.voices__pos{ font-family: var(--font-mono); font-size:.75rem; color: var(--ink-faint); min-width:3.25rem; text-align:center; }
+
+.voices__cta{ margin-top: var(--s3); font-size:.875rem; color: var(--ink-dim); }
+.voices__cta a{ color: var(--cyan); font-weight:600; }
+.voices__cta a:hover{ text-decoration:underline; }
+
 /* --- stack --------------------------------------------------------------------- */
 
 .layers{ display:grid; gap:0; }
@@ -480,6 +576,74 @@ img{ max-width:100%; display:block; }
 .chan b{ display:block; font-weight:700; font-size:1rem; margin-top:.3rem; }
 .chan small{ display:block; color: var(--ink-faint); font-size:.8125rem; margin-top:.15rem; }
 a.chan:hover b{ color: var(--cyan); }
+
+/* --- página de depoimento (/feedback) ----------------------------------------------- */
+/* Reaproveita .field, .grid2, .btn e .form-msg do formulário de contato. O que
+   entra aqui é só o que aquele formulário não tem: coluna estreita de leitura,
+   agrupamento por assunto, contador de caracteres, consentimento e o painel que
+   substitui o formulário depois do envio. */
+
+.page-narrow{ max-width:48rem; }
+.page{ padding-block: clamp(2.5rem,6vw,4rem) var(--s6); }
+.page__head{ margin-bottom: var(--s5); }
+.page__head h1{ font-size: clamp(1.9rem,4.4vw,2.8rem); margin-top:.6rem; text-wrap:balance; }
+
+/* role="group" + aria-labelledby em vez de <fieldset>/<legend>: o leitor de
+   tela anuncia o grupo ao entrar em cada campo do mesmo jeito, e o layout fica
+   previsível. O <legend> é posicionado pelo navegador em relação à BORDA do
+   fieldset e ignora o padding-block-start dele, então o padding que separa um
+   grupo do outro empurrava só o conteúdo: o vão entre título e primeiro campo
+   saía 24px no primeiro grupo e 60px nos demais. */
+.fieldset{ min-width:0; }
+.fieldset + .fieldset{ margin-top: var(--s4); padding-top: var(--s4); border-top:1px solid var(--border); }
+.fieldset__t{
+  margin-bottom: var(--s3);
+  font-family: var(--font-mono); font-size:.6875rem; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; color: var(--cyan);
+}
+
+/* O .grid2 do contato mora numa coluna de ~1.3fr e cai naturalmente em 2×2.
+   Aqui a coluna é a largura de leitura inteira, e o mesmo minmax(12rem) daria
+   três colunas — o select nasceria estreito e o placeholder do cargo cortado.
+   15rem trava em duas colunas no desktop e uma no celular. */
+.fieldset .grid2{ grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+.field__hint{ font-size:.75rem; color: var(--ink-faint); margin-top:.35rem; font-weight:400; }
+.field--req > span::after{ content:' *'; color: var(--cyan); }
+
+.counter{ display:block; text-align:right; font-family: var(--font-mono); font-size:.6875rem; color: var(--ink-faint); margin-top:.35rem; }
+.counter.is-near{ color: var(--mint); }
+.counter.is-full{ color:#E8836B; }
+
+/* O consentimento é a decisão mais importante do formulário e a única que não
+   dá para desfazer depois de publicar. Ganha caixa própria em vez de virar mais
+   uma linha no meio dos campos. */
+.consent{
+  display:flex; gap:.8rem; align-items:flex-start;
+  background: var(--bg-plate); border:1px solid var(--border); border-radius:12px;
+  padding: var(--s3); cursor:pointer;
+}
+.consent:hover{ border-color: var(--border-strong); }
+.consent input{ flex:none; width:18px; height:18px; margin:.2rem 0 0; accent-color: var(--cyan-fill); cursor:pointer; }
+.consent b{ display:block; font-size:.875rem; font-weight:600; color: var(--ink); line-height:1.45; }
+.consent small{ display:block; font-size:.8125rem; color: var(--ink-dim); margin-top:.45rem; font-weight:400; line-height:1.5; }
+
+.form-actions{ display:flex; flex-wrap:wrap; align-items:center; gap: var(--s3); margin-top: var(--s4); }
+.form-actions .form-msg{ margin-top:0; }
+
+.form-done{
+  background: linear-gradient(180deg, var(--bg-plate), var(--bg-alt));
+  border:1px solid rgba(var(--lux),var(--glow-core)); border-radius:20px;
+  padding: var(--s5) var(--s4); text-align:center;
+  box-shadow: 0 0 120px -40px rgba(var(--lux),var(--glow-final));
+}
+.form-done__ic{
+  width:52px; height:52px; margin-inline:auto; border-radius:50%; display:grid; place-items:center;
+  color: var(--mint); border:1px solid rgba(78,220,160,.4); background: rgba(78,220,160,.08);
+}
+.form-done__ic svg{ width:26px; height:26px; }
+.form-done h2{ font-size: clamp(1.4rem,3vw,1.8rem); margin-top: var(--s3); }
+.form-done p{ margin-top: var(--s2); color: var(--ink-dim); font-weight:400; max-width:32rem; margin-inline:auto; }
+.form-done .btn{ margin-top: var(--s4); }
 
 /* --- rodapé ------------------------------------------------------------------------ */
 

@@ -82,6 +82,99 @@
     alvos.forEach(function (el) { el.classList.add('is-in'); });
   }
 
+  /* ---- faixa de depoimentos ------------------------------------------------ */
+  /* Paginação lateral: cada clique avança exatamente a largura visível da
+     faixa, que pelo CSS é sempre um conjunto inteiro de cards. O estado das
+     setas e o contador saem do scroll real, não de um índice guardado — assim
+     arrastar com o dedo e clicar na seta nunca saem de sincronia.
+
+     A faixa já rola sozinha sem nada disto (toque, trackpad, teclado). Este
+     bloco só acrescenta as setas, que nem existem no HTML sem JavaScript. */
+  var faixa = document.getElementById('voices-track');
+  var faixaNav = document.getElementById('voices-nav');
+  var faixaPos = document.getElementById('voices-pos');
+
+  if (faixa && faixaNav && faixaPos) {
+    var botoes = faixaNav.querySelectorAll('.voices__btn');
+    var cards = faixa.querySelectorAll('.voice');
+    var faixaAgendada = false;
+
+    /* Uma página é um número inteiro de cards, não a largura visível da faixa.
+       Parece a mesma coisa e não é: a largura visível não conta o gap que vem
+       depois do último card, então rolar por ela deixaria a página seguinte
+       alguns pixels fora do lugar, acumulando desalinhamento a cada clique — e
+       a contagem de páginas ganharia uma página fantasma no fim (6 cards
+       viravam "1 / 7" no celular).
+
+       passo = largura do card + gap, medido do próprio layout em vez de
+       reconstruído a partir do CSS: assim o cálculo continua certo se os
+       breakpoints mudarem. */
+    var medirPagina = function () {
+      if (cards.length < 2) return { porPagina: 1, largura: faixa.clientWidth };
+
+      var primeiro = cards[0].getBoundingClientRect();
+      var passo = cards[1].getBoundingClientRect().left - primeiro.left;
+      if (passo <= 0) return { porPagina: 1, largura: faixa.clientWidth };
+
+      var gap = passo - primeiro.width;
+      var porPagina = Math.max(1, Math.round((faixa.clientWidth + gap) / passo));
+      return { porPagina: porPagina, largura: porPagina * passo };
+    };
+
+    var atualizarFaixa = function () {
+      /* A tolerância de 1px absorve o arredondamento de subpixel da largura
+         calculada no CSS, que senão nunca deixaria a seta da direita
+         desabilitar no fim da faixa. */
+      var maximo = faixa.scrollWidth - faixa.clientWidth;
+      var precisaPaginar = maximo > 1;
+
+      faixaNav.hidden = !precisaPaginar;
+      if (!precisaPaginar) return;
+
+      var pagina = medirPagina();
+      var total = Math.max(1, Math.ceil(cards.length / pagina.porPagina));
+
+      /* No fim da faixa a última página costuma ficar incompleta (6 cards em
+         páginas de 4 param a 2 cards do fim), então o scrollLeft final não é
+         múltiplo da largura de página. Chegou no fim, é a última — sem conta. */
+      var atual = faixa.scrollLeft >= maximo - 1
+        ? total
+        : Math.min(total, Math.floor(faixa.scrollLeft / pagina.largura) + 1);
+
+      faixaPos.textContent = atual + ' / ' + total;
+
+      botoes[0].disabled = faixa.scrollLeft <= 1;
+      botoes[1].disabled = faixa.scrollLeft >= maximo - 1;
+    };
+
+    botoes.forEach(function (botao) {
+      botao.addEventListener('click', function () {
+        faixa.scrollBy({
+          left: Number(botao.getAttribute('data-dir')) * medirPagina().largura,
+          behavior: reduzido ? 'auto' : 'smooth',
+        });
+      });
+    });
+
+    faixa.addEventListener('scroll', function () {
+      /* requestAnimationFrame em vez de reagir a cada tick: o cálculo lê
+         layout e rodaria dezenas de vezes por gesto de rolagem. */
+      if (faixaAgendada) return;
+      faixaAgendada = true;
+      requestAnimationFrame(function () {
+        faixaAgendada = false;
+        atualizarFaixa();
+      });
+    });
+
+    window.addEventListener('resize', atualizarFaixa);
+    atualizarFaixa();
+
+    /* As fontes chegam depois da primeira medição e mudam a altura (e às vezes
+       a largura) dos cards, então vale remedir quando elas assentam. */
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(atualizarFaixa);
+  }
+
   /* ---- formulário de contato ---------------------------------------------- */
   /* O envio passa por um Worker na Cloudflare (apps/contact-worker), que fala
      com o SMTP da Brevo. A URL abaixo é pública de propósito: quem protege o
