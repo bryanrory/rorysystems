@@ -70,7 +70,7 @@ de 300 KB só para exibir texto estático.
 
 - **Comercial:** [comercial@rorysystems.com](mailto:comercial@rorysystems.com)
 - **Direto:** [ceo@rorysystems.com](mailto:ceo@rorysystems.com)
-- **WhatsApp:** [(47) 99163-3210](https://wa.me/5547991633210)
+- **WhatsApp:** [(47) 99268-1391](https://wa.me/5547992681391)
 - **LinkedIn:** [linkedin.com/in/bryan-rory](https://linkedin.com/in/bryan-rory)
 
 <sub>© 2026 Rory Systems · Blumenau, SC</sub>
