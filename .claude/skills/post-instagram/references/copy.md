@@ -50,3 +50,11 @@ prática, um trecho por frase.
 O usuário foi explícito: além do texto, só a logo e o fundo da marca. Nada de
 rodapé, contador de slides, "arraste" repetido em todo slide, marca d'água ou
 legenda. Endereço de site e @ só no último slide.
+
+## Nunca escreva "web" ao nomear o serviço
+
+O serviço se chama **Desenvolvimento**, sem qualificador. O usuário desenvolve
+para web, mobile e desktop, então "Desenvolvimento Web", "web app" e "aplicativo
+web" estreitam o que ele vende. Fale em "sistemas", "aplicações" ou "aplicativos"
+— nunca amarrado a uma plataforma. Sustentação segue a mesma regra: é software, não
+software web.
