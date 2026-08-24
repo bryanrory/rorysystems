@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="pt-BR" class="no-js">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<script>
+/* Resolve o tema antes da primeira pintura, pra não piscar um tema e trocar
+   pro outro em seguida. Mesma ordem usada no site da Rory Systems:
+   escolha salva no navegador > tema do sistema > escuro por padrão. */
+(function(){
+  var root = document.documentElement;
+  function aplicar(tema){
+    root.setAttribute('data-theme', tema);
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', tema === 'light' ? '#FFFFFF' : '#0A0C10');
+  }
+  var salvo = null;
+  try { salvo = localStorage.getItem('rs-theme'); } catch (e) {}
+  if (salvo === 'light' || salvo === 'dark') { aplicar(salvo); }
+  else {
+    var sistemaClaro = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    aplicar(sistemaClaro ? 'light' : 'dark');
+  }
+})();
+</script>
+
+<title>Rory Systems — Carrossel de serviços (mockup)</title>
+<meta name="theme-color" content="#0A0C10" />
+<meta name="description" content="Mockup de carrossel 4:5 para redes sociais — Rory Systems." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* ==========================================================================
+   RORY SYSTEMS — carrossel de serviços (peça de marketing, 4:5)
+
+   Arquivo único e autossuficiente de propósito: ele vive no Drive, ao lado
+   das variações da logo, e precisa abrir com dois cliques em qualquer
+   máquina. CSS e JS ficam inline; só as fontes vêm de fora.
+
+   REGRA DA PEÇA: o slide é lido num celular, com o polegar passando rápido.
+   Então cada slide tem só três coisas — o texto, grande o bastante pra ser
+   lido de relance; a logo, discreta no canto; e o fundo da marca. Sem
+   rodapé, sem legenda, sem enfeite. O que sobra de espaço é respiro
+   proposital, não área vazia: o texto ocupa a maior parte do quadro.
+
+   Cores, tipografia e o símbolo são os oficiais — os mesmos do site
+   rorysystems.com.
+   ========================================================================== */
+
+:root{
+  color-scheme: dark;
+
+  /* --- paleta da marca ---------------------------------------------------
+     Os cinco tokens pedidos no briefing, com os valores oficiais da Rory
+     Systems (os mesmos do arquivo-fonte da logo). */
+  --cor-primaria:   #2C4A7C;  /* índigo — palavra SYSTEMS, base do gradiente  */
+  --cor-secundaria: #3ED6E0;  /* ciano  — rótulos e destaques de texto        */
+  --cor-fundo:      #0A0C10;
+  --cor-texto:      #F4F1EA;
+  --cor-destaque:   #4EDCA0;  /* menta  — segunda frente, sinal de "no ar"    */
+
+  /* Versões sempre vívidas de ciano e menta. As de cima carregam texto, então
+     no tema claro precisam escurecer pra ter contraste de leitura; estas duas
+     só preenchem forma (botão do CTA, barra do bloco) e mantêm a cor viva. */
+  --cor-secundaria-fill: #3ED6E0;
+  --cor-destaque-fill:   #4EDCA0;
+
+  /* --- apoio ------------------------------------------------------------- */
+  --cor-texto-dim:   #A8AEBD;
+  --cor-borda:       rgba(244,241,234,.09);
+  --cor-borda-forte: rgba(244,241,234,.18);
+  --cor-placa:       #12151D;
+  --lux: 62, 214, 224;             /* ciano em RGB, para brilhos e lavados    */
+
+  --fonte-sans: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fonte-mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+
+  /* Proporção do slide. Troque por 1 / 1 pra gerar a versão quadrada — o
+     resto do layout se ajusta sozinho, porque tudo é medido em cqw. */
+  --proporcao: 4 / 5;
+
+  --glow-ambiente: .10;   /* halo de fundo do slide       */
+  --glow-cta: .5;         /* brilho do botão do slide 4   */
+}
+
+/* ==========================================================================
+   TEMA CLARO — a variação clara oficial da marca. O índigo já nasceu pensado
+   pra fundo claro (é a cor da palavra "SYSTEMS" na variação clara), então
+   segue igual. Ciano e menta tiveram que escurecer: os tons vivos são claros
+   demais pra servir de texto sobre fundo branco. Só os tokens mudam aqui —
+   nenhuma regra de layout é reescrita.
+   ========================================================================== */
+:root[data-theme="light"]{
+  color-scheme: light;
+
+  --cor-fundo: #FFFFFF;
+  --cor-texto: #12151D;
+
+  --cor-secundaria: #0B7C88;
+  --cor-destaque:   #0C7A54;
+
+  --cor-texto-dim:   #3F4756;
+  --cor-borda:       rgba(18,21,29,.10);
+  --cor-borda-forte: rgba(18,21,29,.18);
+  --cor-placa:       #F4F6F8;
+
+  /* Sobre branco o brilho difuso some antes; precisa de mais opacidade pra
+     ficar igualmente visível. */
+  --glow-ambiente: .14;
+  --glow-cta: .45;
+}
+
+*,*::before,*::after{ box-sizing: border-box; }
+
+body{
+  margin: 0;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: var(--fonte-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: clamp(1rem, 3vw, 2.5rem) 1rem 3rem;
+  min-height: 100vh;
+}
+
+h1,h2,p{ margin: 0; }
+
+:where(button):focus-visible{ outline: 2px solid var(--cor-secundaria); outline-offset: 3px; }
+
+/* --- barra do mockup (fora da arte, não entra na exportação) -------------- */
+
+.topo{
+  width: min(1080px, 92vw);
+  display: flex; align-items: center; gap: 1rem;
+  font-family: var(--fonte-mono); font-size: .6875rem;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--cor-texto-dim);
+}
+.topo b{ color: var(--cor-secundaria); font-weight: 600; }
+.topo__sep{ flex: 1; height: 1px; background: var(--cor-borda); }
+
+.tema{
+  width: 38px; height: 38px; flex: none; border-radius: 8px;
+  border: 1px solid var(--cor-borda-forte); background: transparent;
+  color: var(--cor-texto-dim); display: grid; place-items: center; cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease;
+}
+.tema:hover{ border-color: var(--cor-secundaria); color: var(--cor-secundaria); }
+.tema svg{ width: 18px; height: 18px; }
+/* Os dois ícones ocupam o mesmo botão; o CSS mostra um ou outro conforme o
+   tema ativo, sem precisar de JS pra isso. */
+:root[data-theme="light"] .ic-sol{ display: none; }
+:root[data-theme="light"] .ic-lua{ display: block; }
+:root[data-theme="dark"] .ic-sol{ display: block; }
+:root[data-theme="dark"] .ic-lua{ display: none; }
+
+/* --- palco e trilho ------------------------------------------------------ */
+
+.palco{
+  position: relative;
+  width: min(1080px, 92vw);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.trilho{
+  position: relative;
+  width: 100%;
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  /* Sem JS o trilho continua sendo um carrossel: arrasta no celular, rola
+     no desktop e para certinho em cada slide. O JS só acrescenta setas,
+     pontos e teclado por cima. */
+}
+.trilho::-webkit-scrollbar{ display: none; }
+
+/* --- o slide ------------------------------------------------------------ */
+
+.slide{
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: var(--proporcao);
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-borda);
+  border-radius: 4px;
+
+  /* A chave da peça: o slide é um container, e todo tamanho de fonte e de
+     espaço abaixo é medido em cqw (porcentagem da largura DELE). Assim a
+     arte fica idêntica no preview de 380px e na exportação de 1080px — o
+     texto não "quebra de escala" no meio do caminho. */
+  container-type: inline-size;
+
+  display: flex;
+  flex-direction: column; justify-content: center; align-items: center;
+  padding: 6cqw 5cqw;
+  text-align: center;
+  isolation: isolate;
+}
+
+/* Fundo da marca: a grade técnica do site (dois gradientes de 1px cruzados)
+   e um halo de ciano no canto. Fica bem discreto — quem tem que aparecer
+   aqui é o texto. */
+.slide::before{
+  content: '';
+  position: absolute; inset: 0; z-index: -2;
+  background-image:
+    linear-gradient(var(--cor-borda) 1px, transparent 1px),
+    linear-gradient(90deg, var(--cor-borda) 1px, transparent 1px);
+  background-size: 16cqw 16cqw;
+}
+.slide::after{
+  content: '';
+  position: absolute; z-index: -1;
+  width: 95cqw; height: 95cqw;
+  top: -38cqw; right: -32cqw;
+  background: radial-gradient(circle, rgba(var(--lux), var(--glow-ambiente)) 0%, transparent 68%);
+  pointer-events: none;
+}
+.slide--cta::after{ top: auto; bottom: -42cqw; right: -28cqw; }
+
+/* --- logo: assinatura completa no canto superior direito de TODOS os slides
+   (símbolo + "Rory SYSTEMS", o mesmo travamento da variação oficial) -------- */
+
+.logo{
+  position: absolute; top: 4.5cqw; right: 5cqw;
+  display: flex; align-items: center; gap: 3.2cqw;
+}
+.logo__marca{ width: 12cqw; height: 12cqw; flex: none; }
+.logo__nome{ display: flex; flex-direction: column; line-height: 1; text-align: left; }
+.logo__r{ font-weight: 800; font-size: 6.8cqw; letter-spacing: -.02em; color: var(--cor-texto); }
+.logo__s{
+  font-weight: 600; font-size: 2.7cqw; letter-spacing: .26em;
+  color: var(--cor-secundaria); margin-top: 1cqw;
+}
+
+/* --- tipografia da arte ---------------------------------------------------
+   Todos os corpos de texto são grandes de propósito: a peça é lida num feed
+   de celular, onde o slide inteiro tem uns 8 cm de altura. O que parece
+   exagerado no monitor é o tamanho certo no telefone. */
+
+/* Rótulo/tag: mono, caixa alta, com o losango ciano na frente — a assinatura
+   de rótulo da marca, igual à do site. */
+.tag{
+  display: inline-flex; align-items: center; gap: 1.4cqw;
+  font-family: var(--fonte-mono); font-weight: 600;
+  font-size: 2.6cqw; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--cor-secundaria);
+  margin-bottom: 4.5cqw;
+}
+.tag::before{
+  content: ''; width: 1.5cqw; height: 1.5cqw; flex: none;
+  background: var(--cor-secundaria); transform: rotate(45deg);
+}
+
+.titulo{
+  font-weight: 800; letter-spacing: -.042em; line-height: 1.0;
+  font-size: 15.5cqw;
+}
+.titulo em{ font-style: normal; color: var(--cor-secundaria); }
+/* Menta = sustentar o que já existe; ciano = construir o que vem. Mesmo
+   código de cor das barras dos blocos do slide 3. */
+.titulo em.manter, .corpo b.manter{ color: var(--cor-destaque); }
+
+/* Chamada da capa: a única linha da peça que fala com o dedo de quem está
+   passando o feed. Fica em menta — a cor de "continua" da marca — e em mono,
+   pra não competir com o título. */
+.chamada{
+  display: inline-flex; align-items: center; gap: 1.6cqw;
+  margin-top: 6cqw;
+  font-family: var(--fonte-mono); font-weight: 600;
+  font-size: 3.8cqw; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--cor-destaque);
+}
+.chamada svg{ width: 4.2cqw; height: 4.2cqw; flex: none; }
+
+/* ==========================================================================
+   SLIDE 2 — o que fazemos
+   ========================================================================== */
+
+.corpo{
+  font-size: 10.5cqw; line-height: 1.14; font-weight: 700;
+  letter-spacing: -.02em; color: var(--cor-texto);
+}
+.corpo b{ color: var(--cor-secundaria); font-weight: 800; }
+
+/* ==========================================================================
+   SLIDE 3 — os dois serviços
+   ========================================================================== */
+
+/* Os dois blocos são deliberadamente idênticos em peso: mesma altura, mesma
+   borda, mesmo tratamento. Só o índice e a cor da barra mudam — construir e
+   sustentar valem o mesmo aqui. */
+.blocos{
+  display: grid; grid-template-rows: auto auto; gap: 4cqw;
+  flex: none; align-self: stretch;
+}
+.bloco{
+  position: relative;
+  background: var(--cor-placa);
+  border: 1px solid var(--cor-borda);
+  border-radius: 3px;
+  padding: 6cqw 5.5cqw;
+  display: flex; flex-direction: column; justify-content: center; gap: 2.4cqw;
+  overflow: hidden;
+}
+.bloco::before{
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: .8cqw;
+}
+.bloco--dev::before{ background: var(--cor-secundaria-fill); }
+.bloco--sust::before{ background: var(--cor-destaque-fill); }
+
+.bloco__titulo{ font-size: 7.6cqw; font-weight: 800; letter-spacing: -.035em; line-height: 1.05; }
+.bloco--dev .bloco__titulo{ color: var(--cor-secundaria); }
+.bloco--sust .bloco__titulo{ color: var(--cor-destaque); }
+.bloco__texto{ font-size: 4.6cqw; line-height: 1.3; color: var(--cor-texto-dim); font-weight: 500; }
+
+/* ==========================================================================
+   SLIDE 4 — CTA
+   ========================================================================== */
+
+.slide--cta .titulo{ font-size: 9.8cqw; }
+
+/* A pergunta do briefing vira linha de apoio: é ela que transforma a
+   assinatura da marca em convite pra falar. */
+.apoio{
+  font-size: 5.6cqw; line-height: 1.22; font-weight: 500;
+  color: var(--cor-texto-dim); margin-top: 4.5cqw; max-width: 24ch;
+}
+
+/* Único elemento que brilha na peça inteira. Não é botão de verdade (a arte
+   vira imagem no fim das contas), mas tem que parecer clicável o bastante
+   pra puxar o dedo pro Direct. */
+.cta{
+  display: inline-flex; align-items: center; gap: 2.2cqw;
+  margin-top: 6cqw;
+  padding: 3.6cqw 5.4cqw;
+  border-radius: 1.2cqw;
+  background: var(--cor-secundaria-fill);
+  color: #06212B;
+  font-weight: 800; font-size: 5.2cqw; letter-spacing: -.02em; line-height: 1.1;
+  box-shadow: 0 0 14cqw -2cqw rgba(var(--lux), var(--glow-cta));
+}
+.cta svg{ width: 4.2cqw; height: 4.2cqw; flex: none; }
+
+/* Endereço do site: fecha o carrossel com o canal que não depende do Direct.
+   Em mono e discreto — quem manda no slide continua sendo a assinatura. */
+.site{
+  margin-top: 4cqw;
+  font-family: var(--fonte-mono); font-weight: 500;
+  font-size: 3.9cqw; letter-spacing: .06em; color: var(--cor-texto-dim);
+}
+
+/* ==========================================================================
+   CONTROLES — setas, pontos e contador. Ficam FORA do slide de propósito:
+   a exportação recorta só a área da arte, então nada disso aparece na imagem
+   publicada.
+   ========================================================================== */
+
+.seta{
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 5;
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid var(--cor-borda-forte);
+  background: var(--cor-fundo); color: var(--cor-texto);
+  font-size: 1.25rem; line-height: 1; cursor: pointer;
+  display: grid; place-items: center;
+  transition: border-color 160ms ease, color 160ms ease, opacity 160ms ease;
+}
+.seta:hover:not(:disabled){ border-color: var(--cor-secundaria); color: var(--cor-secundaria); }
+.seta:disabled{ opacity: .3; cursor: not-allowed; }
+.seta--prev{ left: -22px; }
+.seta--next{ right: -22px; }
+@media (max-width: 46rem){
+  .seta--prev{ left: 6px; }
+  .seta--next{ right: 6px; }
+}
+
+.controles{
+  width: min(1080px, 92vw);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+
+.pontos{ display: flex; align-items: center; gap: .6rem; }
+.ponto{
+  width: 26px; height: 6px; padding: 0; border: none; border-radius: 99px;
+  background: var(--cor-borda-forte); cursor: pointer;
+  transition: background-color 200ms ease, width 200ms ease;
+}
+.ponto:hover{ background: var(--cor-texto-dim); }
+.ponto[aria-selected="true"]{ width: 46px; background: var(--cor-secundaria-fill); }
+
+.contador{
+  font-family: var(--fonte-mono); font-size: .75rem;
+  letter-spacing: .14em; color: var(--cor-texto-dim);
+}
+.contador b{ color: var(--cor-texto); font-weight: 600; }
+
+/* Sem JavaScript nada disso funcionaria; então nada disso aparece. O trilho
+   sozinho continua entregando os quatro slides. */
+.no-js .seta, .no-js .pontos, .no-js .contador, .no-js .tema{ display: none; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Símbolo oficial da marca, declarado uma vez e reaproveitado em todos os
+     slides. É a variação de fundo transparente: os dois quadrados da base
+     ficam vazados e a máscara esconde o trecho do traço que passaria por
+     dentro deles — assim a logo funciona igual no tema claro e no escuro. -->
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <linearGradient id="rs-grad" x1="0" y1="64" x2="64" y2="0">
+      <stop offset="0" stop-color="#2C4A7C"/><stop offset="1" stop-color="#3ED6E0"/>
+    </linearGradient>
+    <mask id="rs-mask">
+      <rect x="0" y="0" width="64" height="64" fill="white"/>
+      <rect x="10" y="36" width="16" height="16" rx="4" fill="black"/>
+      <rect x="42" y="36" width="16" height="16" rx="4" fill="black"/>
+    </mask>
+    <symbol id="rs-mark" viewBox="0 0 64 64">
+      <path d="M18,44 L34,24 L50,44" fill="none" stroke="url(#rs-grad)" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round" mask="url(#rs-mask)"/>
+      <rect x="10" y="36" width="16" height="16" rx="4" fill="none" stroke="url(#rs-grad)" stroke-width="2.5"/>
+      <rect x="26" y="16" width="16" height="16" rx="4" fill="url(#rs-grad)"/>
+      <rect x="42" y="36" width="16" height="16" rx="4" fill="none" stroke="url(#rs-grad)" stroke-width="2.5"/>
+      <circle cx="42" cy="18" r="3" fill="#4EDCA0"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- Barra do mockup: só para quem está revisando a peça. -->
+<div class="topo">
+  <span>Rory Systems <b>/ carrossel de serviços</b></span>
+  <span class="topo__sep"></span>
+  <span>1080 × 1350 · 4:5</span>
+  <button class="tema" id="tema" type="button" aria-label="Alternar tema claro e escuro">
+    <svg class="ic-sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"/></svg>
+    <svg class="ic-lua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>
+  </button>
+</div>
+
+<div class="palco">
+  <button class="seta seta--prev" id="anterior" type="button" aria-label="Slide anterior" aria-controls="trilho">&#8249;</button>
+
+  <div class="trilho" id="trilho" tabindex="0" role="group"
+       aria-roledescription="carrossel" aria-label="Carrossel de serviços da Rory Systems">
+
+    <!-- ===== SLIDE 1 — CAPA ===== -->
+    <article class="slide slide--capa" role="group" aria-roledescription="slide" aria-label="1 de 4: capa">
+      <div class="logo" role="img" aria-label="Rory Systems">
+        <svg class="logo__marca" aria-hidden="true"><use href="#rs-mark"/></svg>
+        <span class="logo__nome"><span class="logo__r">Rory</span><span class="logo__s">SYSTEMS</span></span>
+      </div>
+
+      <h1 class="titulo">Quando o sistema para, <em>a empresa para junto</em>.</h1>
+      <p class="chamada">veja como evitar
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h14M12 6l6 6-6 6"/></svg>
+      </p>
+    </article>
+
+    <!-- ===== SLIDE 2 — O QUE FAZEMOS ===== -->
+    <article class="slide slide--sobre" role="group" aria-roledescription="slide" aria-label="2 de 4: o que fazemos">
+      <div class="logo" role="img" aria-label="Rory Systems">
+        <svg class="logo__marca" aria-hidden="true"><use href="#rs-mark"/></svg>
+        <span class="logo__nome"><span class="logo__r">Rory</span><span class="logo__s">SYSTEMS</span></span>
+      </div>
+
+      <p class="tag">O que fazemos</p>
+      <p class="corpo">Mantemos de pé <b class="manter">o sistema que a sua operação já usa</b>. E construímos <b>o que ela ainda não tem</b>.</p>
+    </article>
+
+    <!-- ===== SLIDE 3 — NOSSOS SERVIÇOS ===== -->
+    <article class="slide slide--servicos" role="group" aria-roledescription="slide" aria-label="3 de 4: nossos serviços">
+      <div class="logo" role="img" aria-label="Rory Systems">
+        <svg class="logo__marca" aria-hidden="true"><use href="#rs-mark"/></svg>
+        <span class="logo__nome"><span class="logo__r">Rory</span><span class="logo__s">SYSTEMS</span></span>
+      </div>
+
+      <p class="tag">Nossos serviços</p>
+
+      <div class="blocos">
+        <div class="bloco bloco--sust">
+          <h2 class="bloco__titulo">Sustentação &amp; Manutenção</h2>
+          <p class="bloco__texto">Resolução de chamados, correção de bugs, otimização e evolução contínua de sistemas ativos.</p>
+        </div>
+
+        <div class="bloco bloco--dev">
+          <h2 class="bloco__titulo">Desenvolvimento Web</h2>
+          <p class="bloco__texto">Criação de sistemas e web apps personalizados para a regra do seu negócio.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- ===== SLIDE 4 — CTA ===== -->
+    <article class="slide slide--cta" role="group" aria-roledescription="slide" aria-label="4 de 4: fale conosco">
+      <div class="logo" role="img" aria-label="Rory Systems">
+        <svg class="logo__marca" aria-hidden="true"><use href="#rs-mark"/></svg>
+        <span class="logo__nome"><span class="logo__r">Rory</span><span class="logo__s">SYSTEMS</span></span>
+      </div>
+
+      <h1 class="titulo">Sustentamos <em class="manter">o que não pode parar</em>. Construímos <em>o que vem a seguir</em>.</h1>
+      <p class="apoio">Precisa de suporte técnico especializado ou tem uma ideia de sistema?</p>
+
+      <p class="cta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        Fale conosco pelo Direct
+      </p>
+
+      <p class="site">www.rorysystems.com</p>
+    </article>
+
+  </div>
+
+  <button class="seta seta--next" id="proximo" type="button" aria-label="Próximo slide" aria-controls="trilho">&#8250;</button>
+</div>
+
+<div class="controles">
+  <div class="pontos" role="tablist" aria-label="Ir para um slide">
+    <button class="ponto" type="button" role="tab" aria-label="Slide 1 — capa" aria-selected="true"></button>
+    <button class="ponto" type="button" role="tab" aria-label="Slide 2 — o que fazemos" aria-selected="false"></button>
+    <button class="ponto" type="button" role="tab" aria-label="Slide 3 — nossos serviços" aria-selected="false"></button>
+    <button class="ponto" type="button" role="tab" aria-label="Slide 4 — fale conosco" aria-selected="false"></button>
+  </div>
+  <p class="contador" aria-live="polite"><b id="atual">01</b> / 04</p>
+</div>
+
+<script>
+/* ==========================================================================
+   Progressive enhancement: o trilho já é um carrossel sem JavaScript (rola,
+   desliza e para em cada slide). O que este script acrescenta é estado —
+   setas, ponto ativo, contador e teclado. Nada aqui é necessário para ler os
+   quatro slides.
+   ========================================================================== */
+(function(){
+  var root = document.documentElement;
+  root.classList.remove('no-js');
+
+  var trilho   = document.getElementById('trilho');
+  var slides   = Array.prototype.slice.call(trilho.querySelectorAll('.slide'));
+  var pontos   = Array.prototype.slice.call(document.querySelectorAll('.ponto'));
+  var anterior = document.getElementById('anterior');
+  var proximo  = document.getElementById('proximo');
+  var atual    = document.getElementById('atual');
+
+  var semAnimacao = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var indice = 0;
+
+  function marcar(i){
+    indice = i;
+    pontos.forEach(function(p, n){ p.setAttribute('aria-selected', n === i ? 'true' : 'false'); });
+    atual.textContent = ('0' + (i + 1)).slice(-2);
+    anterior.disabled = i === 0;
+    proximo.disabled  = i === slides.length - 1;
+  }
+
+  function ir(i){
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    trilho.scrollTo({ left: slides[i].offsetLeft, behavior: semAnimacao ? 'auto' : 'smooth' });
+    marcar(i);
+  }
+
+  anterior.addEventListener('click', function(){ ir(indice - 1); });
+  proximo .addEventListener('click', function(){ ir(indice + 1); });
+  pontos.forEach(function(p, n){ p.addEventListener('click', function(){ ir(n); }); });
+
+  trilho.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); ir(indice - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); ir(indice + 1); }
+  });
+
+  /* Quem manda no estado é a posição real do trilho, não o último clique —
+     assim o arrastar com o dedo atualiza o ponto ativo igual ao clique na
+     seta faz. */
+  if ('IntersectionObserver' in window){
+    var observador = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(entrada){
+        if (entrada.isIntersecting) marcar(slides.indexOf(entrada.target));
+      });
+    }, { root: trilho, threshold: 0.6 });
+    slides.forEach(function(s){ observador.observe(s); });
+  }
+
+  marcar(0);
+
+  /* Alternador de tema: grava a escolha e deixa o CSS reagir ao data-theme. */
+  document.getElementById('tema').addEventListener('click', function(){
+    var novo = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', novo);
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', novo === 'light' ? '#FFFFFF' : '#0A0C10');
+    try { localStorage.setItem('rs-theme', novo); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>
