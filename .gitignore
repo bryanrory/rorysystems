@@ -3,7 +3,10 @@ Thumbs.db
 *.log
 .vscode/
 .idea/
-.claude/
+# Configuração local do Claude Code fica de fora, mas as skills do projeto
+# são ferramenta compartilhada e precisam ser versionadas.
+.claude/*
+!.claude/skills/
 
 # Worker de contato: dependências, build local e — principalmente —
 # credenciais. .dev.vars guarda usuário/chave do SMTP no desenvolvimento
