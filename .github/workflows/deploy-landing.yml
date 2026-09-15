@@ -1,8 +1,13 @@
 name: Publicar landing no GitHub Pages
 
-# Publica apenas apps/landing — o resto do repositório (futuros apps) fica
+# Publica apps/landing — o resto do repositório (futuros apps) fica
 # fora do site. Roda a cada push em master que mexa nessa pasta, ou
 # manualmente pela aba Actions.
+#
+# O subdiretório /pizzaria-tertulia vem de outro repositório
+# (bryanrory/tertulia-pizzaria-landing) e é baixado em tempo de build —
+# os arquivos da Tertúlia nunca são commitados aqui, e cada deploy
+# publica a versão mais recente daquele repo.
 on:
   push:
     branches: [master]
@@ -28,9 +33,24 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Baixar landing da Pizzaria Tertúlia
+        uses: actions/checkout@v4
+        with:
+          repository: bryanrory/tertulia-pizzaria-landing
+          path: _tertulia-pizzaria-landing
+
+      - name: Montar site publicado
+        run: |
+          mkdir -p _site
+          cp -r apps/landing/. _site/
+          mkdir -p _site/pizzaria-tertulia
+          cp -r _tertulia-pizzaria-landing/. _site/pizzaria-tertulia/
+          rm -rf _site/pizzaria-tertulia/.git
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: apps/landing
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
