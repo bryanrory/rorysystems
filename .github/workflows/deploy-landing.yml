@@ -4,10 +4,11 @@ name: Publicar landing no GitHub Pages
 # fora do site. Roda a cada push em master que mexa nessa pasta, ou
 # manualmente pela aba Actions.
 #
-# O subdiretório /pizzaria-tertulia vem de outro repositório
-# (bryanrory/tertulia-pizzaria-landing) e é baixado em tempo de build —
-# os arquivos da Tertúlia nunca são commitados aqui, e cada deploy
-# publica a versão mais recente daquele repo.
+# Os subdiretórios de clientes vêm de repositórios próprios e são
+# baixados em tempo de build, então nada deles é commitado aqui e cada
+# deploy publica a versão mais recente de cada um:
+#   /pizzaria-tertulia  <- bryanrory/tertulia-pizzaria-landing
+#   /oficina_dos_guri   <- bryanrory/oficina_dos_guri
 on:
   push:
     branches: [master]
@@ -40,6 +41,12 @@ jobs:
           repository: bryanrory/tertulia-pizzaria-landing
           path: _tertulia-pizzaria-landing
 
+      - name: Baixar landing da Oficina Dos Guri
+        uses: actions/checkout@v4
+        with:
+          repository: bryanrory/oficina_dos_guri
+          path: _oficina-dos-guri
+
       - name: Montar site publicado
         run: |
           mkdir -p _site
@@ -47,6 +54,9 @@ jobs:
           mkdir -p _site/pizzaria-tertulia
           cp -r _tertulia-pizzaria-landing/. _site/pizzaria-tertulia/
           rm -rf _site/pizzaria-tertulia/.git
+          mkdir -p _site/oficina_dos_guri
+          cp -r _oficina-dos-guri/. _site/oficina_dos_guri/
+          rm -rf _site/oficina_dos_guri/.git
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
