@@ -7,30 +7,21 @@ Carrossel de 5 slides. Os arquivos para publicar estão em `png/`, na ordem
 
 ## Legenda
 
-Seu cliente pesquisa sua empresa antes mesmo de falar com você.
+Seu cliente pesquisa sua empresa antes de falar com você. E quando ele chega
+na sua página, quase sempre não acontece nada.
 
-E quando ele chega na sua página, o que acontece? Na maioria das vezes, nada.
-Ele lê, acha bonito, fecha a aba e vai pedir indicação no grupo do WhatsApp.
+O problema raramente é o design. É que a página foi feita para apresentar a
+empresa, não para gerar contato.
 
-O problema quase nunca é o design. É que a página foi feita para apresentar a
-empresa, não para gerar contato. São trabalhos diferentes.
+Landing page que vende tem quatro coisas:
 
-Uma landing page que vende tem quatro coisas, sempre:
+→ Promessa clara na primeira tela
+→ Prova real: caso, número, cliente com nome
+→ Uma única ação, repetida
+→ Menos de 3 segundos para carregar no celular
 
-→ Promessa clara na primeira tela, porque o visitante decide em 5 segundos.
-→ Prova que sustenta a promessa: caso real, número medido, cliente com nome.
-→ Uma única ação, repetida, porque cada opção extra derruba a conversão.
-→ Velocidade de verdade no celular. Passou de 3 segundos, metade vai embora.
-
-Aqui a gente escreve o código da página, sem tema pronto e sem bundle de
-300 KB para exibir texto estático. Carrega na hora, sobe bem no Google e o
-formulário chega no seu e-mail e no WhatsApp.
-
-Ficou em dúvida em algum item do checklist? Manda o endereço do seu site no
-direct. Devolvo uma análise honesta de velocidade, primeira tela e caminho
-até o contato. Sem custo e sem compromisso.
-
-📍 Blumenau, SC — atendimento remoto para todo o Brasil
+Ficou em dúvida em algum item do checklist? Manda o link do seu site no
+direct. Devolvo uma análise honesta, sem custo.
 
 #landingpage #criacaodesites #sitequevende #marketingdigital #blumenau
 
