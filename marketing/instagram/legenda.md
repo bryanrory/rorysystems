@@ -38,26 +38,40 @@ até o contato. Sem custo e sem compromisso.
 
 ## Música
 
-O Instagram já deixa colar áudio em carrossel, e isso abre espaço para o post
-aparecer na aba de Reels e no Explore, então vale escolher com cuidado.
+Conta comercial tem biblioteca de música reduzida: os acordos do Instagram com
+as gravadoras cobrem uso pessoal, não uso de marca. Por isso as faixas
+populares não aparecem no seu perfil. Três caminhos, do mais seguro ao mais
+trabalhoso:
 
-Trilha em alta muda de semana, então a regra vale mais que o nome: dentro do
-app, escolha na aba "Em alta", prefira um áudio com a setinha de alta e com
-menos de 50 mil usos. Os saturados, de milhões de vídeos, competem com todo
-mundo.
+### 1. Meta Sound Collection (recomendado)
 
-Três opções que combinam com o tom do post, da mais segura para a mais
-arriscada:
+É a biblioteca livre de royalties da própria Meta, licenciada para uso
+comercial. Aparece na aba de áudio ao montar o post e não tem risco de
+silenciamento nem de bloqueio por direito autoral.
 
-1. **"Less Than a Lover" — JENNIE.** Calma e aspiracional, o tipo de trilha
-   que sustenta conteúdo de autoridade sem virar festa. É a que mais combina
-   com um carrossel técnico.
-2. **Beat instrumental de lo-fi ou house minimalista da aba "Em alta".**
-   Instrumental não disputa atenção com o texto dos slides, que é o que
-   precisa ser lido aqui.
-3. **"JETSKI" — Pedro Sampaio e Melody.** Alcance grande no Brasil, mas
-   energia de balada. Rende se você quiser o post mais solto e menos
-   corporativo.
+Procure por termos como `lo-fi`, `minimal house`, `corporate` ou `chill beat`
+e escolha uma faixa instrumental. Para este carrossel, instrumental é melhor
+de qualquer forma: o post é de leitura, e letra concorre com o texto dos
+slides.
 
-Evite letra em português falando de amor ou balada por cima de um post sobre
-conversão: o áudio conta uma história e os slides contam outra.
+### 2. Mudar o tipo de conta
+
+Perfil de Criador de conteúdo tem acesso à biblioteca completa. A troca é
+feita nas configurações e a liberação leva até 72 horas. Trocar a categoria
+do perfil para "Empreendedor" costuma ter o mesmo efeito, sem sair de conta
+profissional.
+
+Vale pesar: a conta de criador é feita para pessoa, não para empresa, e você
+perde parte das ferramentas comerciais.
+
+### 3. Áudio original
+
+Grave você mesmo lendo o checklist do slide 1, em vinte segundos. Áudio
+original não depende de licença, marca o post com o seu nome e ainda cria uma
+trilha que outras pessoas podem reutilizar.
+
+### O que evitar
+
+Pegar faixa popular por fora, de conta pessoal ou de app de edição. Perfil de
+marca usando música licenciada sem direito é o caso clássico de post
+silenciado ou removido depois de já ter rodado.
