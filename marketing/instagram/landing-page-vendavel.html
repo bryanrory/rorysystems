@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Rory Systems — Carrossel: landing page vendável</title>
+
+<!--
+  CARROSSEL DE INSTAGRAM — "Você já tem uma landing page?"
+  ---------------------------------------------------------------------------
+  Cinco slides em 1080x1350 (4:5, o formato que ocupa mais área no feed).
+
+  A identidade é a mesma do site: as variáveis de cor abaixo são cópia literal
+  do :root de apps/landing/style.css, as três famílias tipográficas são as
+  mesmas do <head> do index.html e o SVG da logo é o mesmo path do cabeçalho
+  do site, incluindo o gradiente índigo→ciano e o ponto menta.
+
+  A regra do glow do site vale aqui também: brilho só no que é ação — o botão
+  de CTA e o quadrado central da marca. Nenhum card de conteúdo brilha.
+
+  ALTURA É ORÇAMENTO FECHADO. O slide tem 1350px e overflow:hidden; qualquer
+  bloco que cresça além disso come o rodapé com a logo. Os tamanhos abaixo
+  foram medidos para caber com folga; ao editar o texto, confira o resultado
+  reexportando os PNGs.
+
+  Para exportar: rode scripts/exportar-slides.mjs (Playwright) e pegue os
+  cinco PNGs em ./png/. O botão "Baixar PNG" de cada slide serve para uma
+  conferência rápida no navegador, mas sai sem as fontes da marca.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=IBM+Plex+Mono:wght@500;600&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+/* ===========================================================================
+   TOKENS — cópia literal da marca (apps/landing/style.css)
+   =========================================================================== */
+:root{
+  color-scheme: dark;
+
+  --bg:        #0A0C10;
+  --bg-alt:    #0D1017;
+  --bg-plate:  #12151D;
+
+  --border:        rgba(244,241,234,.09);
+  --border-strong: rgba(244,241,234,.18);
+  --border-control:#4A5468;
+
+  --ink:       #F4F1EA;
+  --ink-dim:   #9198A9;
+  --ink-faint: #5B6272;
+
+  --indigo: #2C4A7C;
+  --cyan:   #3ED6E0;
+  --mint:   #4EDCA0;
+  --lux:    62, 214, 224;
+
+  --cyan-fill: #3ED6E0;
+  --mint-fill: #4EDCA0;
+
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-sans:    'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    'IBM Plex Mono', ui-monospace, Consolas, monospace;
+
+  --glow-cta: .5;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+/* ===========================================================================
+   BANCADA — só existe na tela, some na exportação
+   =========================================================================== */
+body{
+  background:#05070A;
+  font-family: var(--font-sans);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  padding: 40px 20px 80px;
+}
+.bancada{ max-width: 1120px; margin-inline:auto; }
+.bancada__topo{
+  display:flex; flex-wrap:wrap; align-items:center; gap:16px;
+  margin-bottom: 36px; padding-bottom: 24px;
+  border-bottom:1px solid var(--border);
+}
+.bancada__titulo{ font-size:1.05rem; font-weight:800; letter-spacing:-.02em; }
+.bancada__sub{
+  font-family: var(--font-mono); font-size:.7rem; letter-spacing:.14em;
+  text-transform:uppercase; color: var(--cyan); margin-right:auto;
+}
+.bancada__dica{ font-size:.8rem; color: var(--ink-faint); max-width: 46ch; line-height:1.6; }
+.bancada__dica code{ font-family: var(--font-mono); color: var(--ink-dim); }
+
+.peca{ margin-bottom: 44px; }
+.peca__rotulo{
+  display:flex; align-items:center; gap:10px;
+  font-family: var(--font-mono); font-size:.7rem; letter-spacing:.14em;
+  text-transform:uppercase; color: var(--ink-faint); margin-bottom:12px;
+}
+.peca__rotulo b{ color: var(--cyan); font-weight:600; }
+.peca__rotulo button{
+  margin-left:auto; font-family: var(--font-sans); font-size:.75rem; font-weight:700;
+  letter-spacing:0; text-transform:none;
+  padding:.45rem 1rem; border-radius:8px; cursor:pointer;
+  border:1px solid var(--border-control); background:transparent; color: var(--ink);
+  transition: border-color 160ms ease, color 160ms ease;
+}
+.peca__rotulo button:hover{ border-color: var(--cyan); color: var(--cyan); }
+
+/* O slide nasce em 1080x1350 reais e é reduzido só para caber na tela.
+   A exportação usa o tamanho real, sem a escala. */
+.palco{
+  width:100%;
+  aspect-ratio: 1080 / 1350;
+  position:relative;
+  overflow:hidden;
+  border-radius:14px;
+  border:1px solid var(--border);
+}
+.palco .slide{ position:absolute; top:0; left:0; transform-origin: top left; }
+
+/* ===========================================================================
+   SLIDE — 1080x1350
+   =========================================================================== */
+.slide{
+  width:1080px; height:1350px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  position:relative; overflow:hidden;
+  display:flex; flex-direction:column;
+}
+
+/* Brilho ambiente do site: halo ciano fraco atrás da faixa de título. */
+.slide::before{
+  content:''; position:absolute; top:-240px; left:-120px;
+  width:900px; height:820px; pointer-events:none;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(var(--lux),.10), transparent 70%);
+}
+
+/* --- faixa de título -------------------------------------------------------- */
+.faixa{
+  position:relative;
+  background: var(--bg-plate);
+  border-bottom:1px solid var(--border);
+  padding: 62px 64px 54px;
+  overflow:hidden;
+}
+/* Gancho gráfico do canto: a própria logo em escala grande, sangrando para
+   fora da faixa. Fica atrás do texto e com opacidade baixa, então nunca
+   disputa leitura com o título. */
+.faixa__marca{
+  position:absolute; right:-88px; bottom:-104px; width:330px; height:330px;
+  opacity:.2; pointer-events:none;
+}
+.faixa__marca path{ fill:none; stroke:url(#grad-slide); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+.faixa__marca rect{ fill:none; stroke:url(#grad-slide); stroke-width:3; }
+
+.eyebrow{
+  position:relative;
+  display:inline-flex; align-items:center; gap:.55rem;
+  font-family: var(--font-mono); font-size:18px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; color: var(--cyan);
+}
+.eyebrow::before{ content:''; width:9px; height:9px; background: var(--cyan); transform: rotate(45deg); flex:none; }
+
+.titulo{
+  position:relative;
+  margin-top: 22px;
+  font-size: 56px; line-height:1.06; letter-spacing:-.035em; font-weight:800;
+}
+.titulo em{ font-style:normal; color: var(--cyan); }
+.titulo--menor{ font-size:50px; }
+
+/* --- corpo ----------------------------------------------------------------- */
+.corpo{
+  position:relative;
+  flex:1; min-height:0;
+  padding: 46px 64px 34px;
+  display:flex; flex-direction:column;
+  justify-content: space-between;
+}
+
+.lede{ font-size:29px; line-height:1.45; color: var(--ink-dim); max-width: 44ch; }
+.lede b{ color: var(--ink); font-weight:700; }
+
+/* --- checklist (slide 1) --------------------------------------------------- */
+.dupla{ display:grid; grid-template-columns: 1fr 320px; gap:44px; align-items:stretch; }
+
+.cartao{
+  background: var(--bg-plate);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding: 42px 38px 38px;
+}
+.check{ list-style:none; }
+.check li{
+  display:flex; align-items:flex-start; gap:18px;
+  padding: 25px 0;
+  border-bottom:1px solid var(--border);
+  font-size:28px; line-height:1.3; font-weight:600; letter-spacing:-.01em;
+}
+.check li:first-child{ padding-top:0; }
+.check li:last-child{ border-bottom:0; padding-bottom:0; }
+.check__box{
+  flex:none; width:36px; height:36px; border-radius:9px;
+  border:2.5px solid var(--cyan);
+  display:grid; place-items:center; margin-top:1px;
+}
+.check__box svg{ width:22px; height:22px; stroke: var(--cyan); stroke-width:3.2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+
+.remate{
+  margin-top: 28px; padding-top: 26px;
+  border-top:2px solid var(--cyan);
+  font-size:26px; line-height:1.45; color: var(--ink-dim);
+}
+.remate b{ color: var(--ink); font-weight:700; }
+
+/* --- mockup do celular com o site real ------------------------------------- */
+.fone{
+  width:320px; min-height:664px; flex:none; align-self:stretch;
+  border-radius:42px; padding:10px;
+  background:#1B2029;
+  border:1px solid var(--border-strong);
+  box-shadow: 0 40px 90px -30px rgba(0,0,0,.9);
+}
+.fone__tela{
+  width:100%; height:100%; border-radius:33px; overflow:hidden;
+  background: var(--bg); position:relative;
+  display:flex; flex-direction:column;
+}
+.fone__notch{
+  position:absolute; top:8px; left:50%; transform:translateX(-50%);
+  width:98px; height:24px; border-radius:13px; background:#05070A; z-index:3;
+}
+.fone__barra{
+  display:flex; align-items:center; gap:8px;
+  padding: 40px 16px 12px;
+  border-bottom:1px solid var(--border);
+}
+.fone__nome{ display:flex; flex-direction:column; line-height:1; }
+.fone__nome b{ font-size:13px; font-weight:800; letter-spacing:-.02em; }
+.fone__nome i{ font-style:normal; font-size:6.5px; font-weight:600; letter-spacing:.26em; color:var(--cyan); margin-top:3px; }
+.fone__burger{ margin-left:auto; display:flex; flex-direction:column; gap:3.5px; }
+.fone__burger i{ display:block; width:17px; height:2px; background: var(--ink-dim); border-radius:2px; }
+
+.fone__hero{ padding: 18px 16px 18px; border-bottom:1px solid var(--border); }
+.fone__eyebrow{
+  font-family: var(--font-mono); font-size:7px; letter-spacing:.14em;
+  text-transform:uppercase; color: var(--cyan);
+}
+.fone__h1{ margin-top:8px; font-size:21px; line-height:1.1; font-weight:800; letter-spacing:-.03em; }
+.fone__h1 em{ font-style:normal; color: var(--cyan); }
+.fone__p{ margin-top:9px; font-size:10px; line-height:1.5; color: var(--ink-dim); }
+.fone__btn{
+  margin-top:14px; display:inline-flex; align-items:center; gap:6px;
+  background: var(--cyan-fill); color:#06212B;
+  font-size:9.5px; font-weight:700; padding:8px 13px; border-radius:7px;
+  box-shadow: 0 0 30px -8px rgba(var(--lux),.55);
+}
+
+/* Miniatura da seção "o que fazemos" do site, para o celular não ter
+   buraco vazio entre o hero e a faixa de números. */
+.fone__svc{ flex:1; padding: 16px 16px 20px; display:flex; flex-direction:column; gap:12px; }
+.fone__svc-rot{
+  font-family: var(--font-mono); font-size:7px; letter-spacing:.14em;
+  text-transform:uppercase; color: var(--ink-faint);
+}
+.fone__card{
+  border:1px solid var(--border); border-radius:9px; padding:12px 12px;
+  background: var(--bg-plate);
+}
+.fone__card b{ display:block; font-size:11px; font-weight:800; letter-spacing:-.02em; }
+.fone__card span{ display:block; margin-top:4px; font-size:8.5px; line-height:1.45; color: var(--ink-faint); }
+.fone__card--ativo{ border-color: rgba(var(--lux),.4); }
+.fone__card--ativo b{ color: var(--cyan); }
+
+.fone__prova{
+  margin-top:auto; display:grid; grid-template-columns:repeat(3,1fr);
+  gap:6px; padding:18px 12px 22px;
+  border-top:1px solid var(--border);
+  background: rgba(var(--lux),.05);
+  text-align:center;
+}
+.fone__n{ font-size:23px; font-weight:800; letter-spacing:-.03em; line-height:1; }
+.fone__n span{ color: var(--cyan); }
+.fone__t{ margin-top:6px; font-size:6.5px; line-height:1.35; color: var(--ink-faint); text-transform:uppercase; letter-spacing:.07em; }
+
+/* --- blocos numerados (slides 3 e 4) --------------------------------------- */
+.blocos{ display:flex; flex-direction:column; gap:24px; }
+.blocos--preenche{ flex:1; justify-content:space-evenly; padding-block:10px; }
+.bloco{
+  display:flex; gap:24px; align-items:flex-start;
+  background: var(--bg-plate);
+  border:1px solid var(--border);
+  border-left:3px solid var(--cyan);
+  border-radius:16px;
+  padding: 32px 34px 34px;
+}
+.bloco__n{
+  flex:none; font-family: var(--font-mono); font-size:22px; font-weight:600;
+  color: var(--cyan); padding-top:3px; letter-spacing:.04em; min-width:34px;
+}
+.bloco__h{ font-size:31px; font-weight:800; letter-spacing:-.025em; line-height:1.2; }
+.bloco__p{ margin-top:10px; font-size:24px; line-height:1.45; color: var(--ink-dim); }
+.bloco__p b{ color: var(--ink); font-weight:700; }
+
+/* --- comparativo (slide 2) -------------------------------------------------- */
+.antes-depois{ display:grid; grid-template-columns:1fr 1fr; gap:26px; margin-top:40px; }
+.coluna{
+  background: var(--bg-plate); border:1px solid var(--border);
+  border-radius:18px; padding: 40px 34px;
+}
+.coluna--boa{ border-color: rgba(var(--lux),.35); }
+.coluna__rot{
+  font-family: var(--font-mono); font-size:17px; letter-spacing:.12em;
+  text-transform:uppercase; color: var(--ink-faint);
+}
+.coluna--boa .coluna__rot{ color: var(--cyan); }
+.coluna ul{ list-style:none; margin-top:22px; }
+.coluna li{
+  display:flex; gap:14px; align-items:flex-start;
+  font-size:25px; line-height:1.4; color: var(--ink-dim);
+  padding:19px 0; border-bottom:1px solid var(--border);
+}
+.coluna li:last-child{ border-bottom:0; padding-bottom:0; }
+.coluna li i{ flex:none; width:22px; height:22px; margin-top:3px; }
+.coluna li i svg{ width:22px; height:22px; fill:none; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+.coluna--ma li i svg{ stroke: var(--ink-faint); }
+.coluna--boa li i svg{ stroke: var(--mint-fill); }
+.coluna--boa li{ color: var(--ink); font-weight:600; }
+
+/* --- números de prova, no padrão .proof do site ---------------------------- */
+.numeros{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:42px; }
+.numero{
+  background: var(--bg-plate); border:1px solid var(--border);
+  border-radius:18px; padding:40px 26px; text-align:center;
+}
+.numero__n{
+  font-weight:800; font-size:66px; line-height:1; letter-spacing:-.03em;
+  font-variant-numeric: tabular-nums;
+}
+.numero__n span{ color: var(--cyan); }
+.numero__t{ margin-top:14px; font-size:21px; font-weight:600; text-wrap:balance; }
+.numero__d{ margin-top:7px; font-size:18px; line-height:1.4; color: var(--ink-faint); }
+
+/* --- entregáveis do diagnóstico (slide 5) ---------------------------------- */
+.entrega{ list-style:none; margin-top:42px; display:flex; flex-direction:column; gap:4px; }
+.entrega li{
+  display:flex; gap:16px; align-items:flex-start;
+  font-size:26px; line-height:1.4; color: var(--ink);
+  padding:19px 0; border-bottom:1px solid var(--border);
+}
+.entrega li:last-child{ border-bottom:0; }
+.entrega li svg{ flex:none; width:24px; height:24px; margin-top:4px; stroke: var(--mint-fill); fill:none; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+.entrega li span{ color: var(--ink-dim); }
+
+/* --- CTA (slide 5) ---------------------------------------------------------- */
+.cta{
+  display:inline-flex; align-items:center; gap:14px;
+  background: var(--cyan-fill); color:#06212B;
+  font-size:28px; font-weight:800; letter-spacing:.01em;
+  padding: 26px 44px; border-radius:12px;
+  box-shadow: 0 0 80px -12px rgba(var(--lux),var(--glow-cta)), 0 0 0 1px rgba(var(--lux),.15);
+}
+.cta svg{ width:26px; height:26px; fill:currentColor; }
+
+.contatos{ margin-top:40px; display:flex; flex-direction:column; gap:20px; }
+.contato{ display:flex; align-items:center; gap:16px; font-size:26px; color: var(--ink-dim); }
+.contato svg{ width:26px; height:26px; flex:none; stroke: var(--cyan); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.contato b{ color: var(--ink); font-weight:700; }
+
+/* --- indicador de arraste, sempre no fim do corpo -------------------------- */
+.arraste{
+  align-self:flex-end;
+  padding: 26px 0 0;
+  display:flex; align-items:center; gap:12px;
+  font-family: var(--font-mono); font-size:17px; letter-spacing:.1em;
+  text-transform:uppercase; color: var(--ink-faint);
+}
+.arraste svg{ width:22px; height:22px; stroke: var(--cyan); fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+
+/* --- rodapé com a logo idêntica à do site ---------------------------------- */
+.rodape{
+  position:relative;
+  margin-top:auto;
+  padding: 32px 64px 40px;
+  display:flex; align-items:center; gap:22px;
+  border-top:1px solid var(--border);
+}
+.brand{ display:flex; align-items:center; gap:14px; }
+.brand svg{ width:54px; height:54px; flex:none; }
+.brand-mark-edge{ fill: var(--bg); }
+.brand-mark-dot{ fill: var(--mint-fill); }
+.brand__w{ display:flex; flex-direction:column; line-height:1; }
+.brand__r{ font-weight:800; font-size:32px; letter-spacing:-.02em; }
+.brand__s{ font-size:17px; font-weight:600; letter-spacing:.26em; color: var(--cyan); margin-top:5px; }
+.rodape__site{
+  margin-left:auto; text-align:right;
+  font-family: var(--font-mono); font-size:19px; letter-spacing:.04em; color: var(--ink-faint);
+}
+.rodape__site b{ display:block; color: var(--ink-dim); font-weight:500; margin-top:4px; }
+
+@media print{
+  body{ padding:0; background:#fff; }
+  .bancada__topo, .peca__rotulo{ display:none; }
+  .palco{ border:0; border-radius:0; }
+  .peca{ margin:0; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- Gradiente da marca: índigo → ciano, o mesmo do cabeçalho do site. -->
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <linearGradient id="grad-slide" x1="0" y1="64" x2="64" y2="0">
+      <stop offset="0" stop-color="#2C4A7C"/><stop offset="1" stop-color="#3ED6E0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="bancada">
+
+  <div class="bancada__topo">
+    <div>
+      <p class="bancada__sub">Rory Systems · Instagram</p>
+      <p class="bancada__titulo">Carrossel — Landing page vendável</p>
+    </div>
+    <p class="bancada__dica">
+      Cinco slides em 1080 × 1350 px. Rode <code>node scripts/exportar-slides.mjs</code>
+      para gerar os PNGs finais em <code>png/</code>, com as fontes da marca.
+    </p>
+  </div>
+
+  <!-- ======================================================================
+       SLIDE 1 — capa: a pergunta, o checklist e o site no celular
+       ====================================================================== -->
+  <section class="peca">
+    <p class="peca__rotulo"><b>Slide 1</b> capa · checklist
+      <button type="button" data-baixar="slide-1">Baixar PNG</button>
+    </p>
+    <div class="palco">
+      <article class="slide" id="slide-1">
+
+        <header class="faixa">
+          <svg class="faixa__marca" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M18,44 L34,24 L50,44"/>
+            <rect x="10" y="36" width="16" height="16" rx="4"/>
+            <rect x="26" y="16" width="16" height="16" rx="4"/>
+            <rect x="42" y="36" width="16" height="16" rx="4"/>
+          </svg>
+          <p class="eyebrow">Sites que convertem</p>
+          <h1 class="titulo">Você já tem uma landing page?<br><em>Então faça este checklist.</em></h1>
+        </header>
+
+        <div class="corpo">
+          <div class="dupla">
+
+            <div class="cartao">
+              <ul class="check">
+                <li>
+                  <span class="check__box"><svg viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5"/></svg></span>
+                  Ela carrega em menos de 3 segundos?
+                </li>
+                <li>
+                  <span class="check__box"><svg viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5"/></svg></span>
+                  A oferta aparece antes de rolar a tela?
+                </li>
+                <li>
+                  <span class="check__box"><svg viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5"/></svg></span>
+                  O WhatsApp está a um toque de distância?
+                </li>
+                <li>
+                  <span class="check__box"><svg viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5"/></svg></span>
+                  Existe prova real: casos, números, nomes?
+                </li>
+                <li>
+                  <span class="check__box"><svg viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5"/></svg></span>
+                  Você sabe quantos contatos ela gerou no mês?
+                </li>
+              </ul>
+
+              <p class="remate">
+                Ficou em dúvida em algum item?
+                <b>Então você tem um site, não uma página que vende.</b>
+              </p>
+            </div>
+
+            <!-- O celular mostra a própria landing da Rory Systems: mesmo
+                 hero, mesmos serviços e mesmos números da home. -->
+            <div class="fone">
+              <div class="fone__tela">
+                <span class="fone__notch"></span>
+
+                <div class="fone__barra">
+                  <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true">
+                    <path d="M18,44 L34,24 L50,44" fill="none" stroke="url(#grad-slide)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect class="brand-mark-edge" x="10" y="36" width="16" height="16" rx="4" stroke="url(#grad-slide)" stroke-width="2.5"/>
+                    <rect x="26" y="16" width="16" height="16" rx="4" fill="url(#grad-slide)"/>
+                    <rect class="brand-mark-edge" x="42" y="36" width="16" height="16" rx="4" stroke="url(#grad-slide)" stroke-width="2.5"/>
+                    <circle class="brand-mark-dot" cx="42" cy="18" r="3"/>
+                  </svg>
+                  <span class="fone__nome"><b>Rory</b><i>SYSTEMS</i></span>
+                  <span class="fone__burger"><i></i><i></i><i></i></span>
+                </div>
+
+                <div class="fone__hero">
+                  <p class="fone__eyebrow">Sustentação &amp; produtos digitais</p>
+                  <p class="fone__h1">Sustentamos o que <em>não pode parar.</em></p>
+                  <p class="fone__p">Mantemos sistemas críticos e construímos os produtos que sua operação ainda não tem.</p>
+                  <span class="fone__btn">
+                    Falar com especialista
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.2 1.3-1.9 1.4-.5.1-1.2.1-3.7-.9-3.1-1.3-5.1-4.5-5.3-4.7-.1-.2-1.2-1.6-1.2-3.1S6.5 6.7 6.8 6.4c.2-.3.5-.4.7-.4h.5c.2 0 .4 0 .6.5l.8 2c.1.2 0 .4-.1.5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.2 1.5 1.9 1 .9 1.8 1.2 2.1 1.3.2.1.4.1.6-.1l.7-.8c.2-.2.4-.1.6 0l1.9.9c.2.1.4.2.4.3.1.2.1.7-.1 1.4z"/></svg>
+                  </span>
+                </div>
+
+                <div class="fone__svc">
+                  <p class="fone__svc-rot">O que fazemos</p>
+                  <div class="fone__card fone__card--ativo">
+                    <b>Sites de conversão</b>
+                    <span>Landing pages sob medida, rápidas e feitas para gerar contato.</span>
+                  </div>
+                  <div class="fone__card">
+                    <b>Sustentação &amp; resgate</b>
+                    <span>Sistemas críticos que não podem parar.</span>
+                  </div>
+                  <div class="fone__card">
+                    <b>Produtos &amp; integrações com IA</b>
+                    <span>SaaS, aplicações e automações sob medida.</span>
+                  </div>
+                </div>
+
+                <div class="fone__prova">
+                  <div>
+                    <p class="fone__n">99<span>%</span></p>
+                    <p class="fone__t">SLA sustentado</p>
+                  </div>
+                  <div>
+                    <p class="fone__n"><span>−</span>90<span>%</span></p>
+                    <p class="fone__t">retorno pós-entrega</p>
+                  </div>
+                  <div>
+                    <p class="fone__n">20</p>
+                    <p class="fone__t">anos de tecnologia</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <p class="arraste">
+            Arraste
+            <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+          </p>
+        </div>
+
+        <footer class="rodape">
+          <span class="brand">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M18,44 L34,24 L50,44" fill="none" stroke="url(#grad-slide)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect class="brand-mark-edge" x="10" y="36" width="16" height="16" rx="4" stroke="url(#grad-slide)" stroke-width="2.5"/>
+              <rect x="26" y="16" width="16" height="16" rx="4" fill="url(#grad-slide)"/>
+              <rect class="brand-mark-edge" x="42" y="36" width="16" height="16" rx="4" stroke="url(#grad-slide)" stroke-width="2.5"/>
+              <circle class="brand-mark-dot" cx="42" cy="18" r="3"/>
+            </svg>
+            <span class="brand__w">
+              <span class="brand__r">Rory</span>
+              <span class="brand__s">SYSTEMS</span>
+            </span>
+          </span>
+          <p class="rodape__site">rorysystems.com<b>Blumenau, SC</b></p>
+        </footer>
+
+      </article>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       SLIDE 2 — site institucional não é landing page
+       ====================================================================== -->
+  <section class="peca">
+    <p class="peca__rotulo"><b>Slide 2</b> site ≠ landing page
+      <button type="button" data-baixar="slide-2">Baixar PNG</button>
+    </p>
+    <div class="palco">
+      <article class="slide" id="slide-2">
+
+        <header class="faixa">
+          <svg class="faixa__marca" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M18,44 L34,24 L50,44"/>
+            <rect x="10" y="36" width="16" height="16" rx="4"/>
+            <rect x="26" y="16" width="16" height="16" rx="4"/>
+            <rect x="42" y="36" width="16" height="16" rx="4"/>
+          </svg>
+          <p class="eyebrow">O primeiro erro</p>
+          <h1 class="titulo">Um site apresenta.<br><em>Uma landing page vende.</em></h1>
+        </header>
+
+        <div class="corpo">
+          <p class="lede">
+            São trabalhos diferentes. Quando a empresa usa um no lugar do
+            outro, <b>o visitante lê tudo e não faz nada.</b>
+          </p>
+
+          <div class="antes-depois">
+            <div class="coluna coluna--ma">
+              <p class="coluna__rot">Site institucional</p>
+              <ul>
+                <li><i><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></i>Fala da empresa</li>
+                <li><i><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></i>Vários caminhos possíveis</li>
+                <li><i><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></i>Menu com oito opções</li>
+                <li><i><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></i>Sucesso = visita</li>
+              </ul>
+            </div>
+            <div class="coluna coluna--boa">
+              <p class="coluna__rot">Landing page</p>
+              <ul>
+                <li><i><svg viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5"/></svg></i>Fala do problema do cliente</li>
+                <li><i><svg viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5"/></svg></i>Um caminho só</li>
+                <li><i><svg viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5"/></svg></i>Uma ação, repetida</li>
+                <li><i><svg viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5"/></svg></i>Sucesso = contato</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="blocos" style="margin-top:34px">
+            <div class="bloco">
+              <span class="bloco__n">→</span>
+              <div>
+                <p class="bloco__h">Na prática</p>
+                <p class="bloco__p">A landing page é o endereço que você manda no anúncio, no story e no WhatsApp. <b>Ela tem um trabalho só: transformar visita em conversa.</b></p>
+              </div>
+            </div>
+          </div>
+
+          <p class="arraste">
+            Arraste
+            <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+          </p>
+        </div>
+
+        <footer class="rodape">
+          <span class="brand">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M18,44 L34,24 L50,44" fill="none" stroke="url(#grad-slide)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect class="brand-mark-edge" x="10" y="36" width="16" height="16" rx="4" stroke="url(#grad-slide)" stroke-width="2.5"/>
+              <rect x="26" y="16" width="16" height="16" rx="4" fill="url(#grad-slide)"/>
+              <rect class="brand-mark-edge" x="42" y="36" width="16" height="16" rx="4" stroke="url(#grad-slide)" stroke-width="2.5"/>
+              <circle class="brand-mark-dot" cx="42" cy="18" r="3"/>
+            </svg>
+            <span class="brand__w">
+              <span class="brand__r">Rory</span>
+              <span class="brand__s">SYSTEMS</span>
+            </span>
+          </span>
+          <p class="rodape__site">rorysystems.com<b>Blumenau, SC</b></p>
+        </footer>
+
+      </article>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       SLIDE 3 — os quatro blocos que fazem a página vender
+       ====================================================================== -->
+  <section class="peca">
+    <p class="peca__rotulo"><b>Slide 3</b> a estrutura que converte
+      <button type="button" data-baixar="slide-3">Baixar PNG</button>
+    </p>
+    <div class="palco">
+      <article class="slide" id="slide-3">
+
+        <header class="faixa">
+          <svg class="faixa__marca" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M18,44 L34,24 L50,44"/>
+            <rect x="10" y="36" width="16" height="16" rx="4"/>
+            <rect x="26" y="16" width="16" height="16" rx="4"/>
+            <rect x="42" y="36" width="16" height="16" rx="4"/>
+          </svg>
+          <p class="eyebrow">A estrutura</p>
+          <h1 class="titulo">Toda página que vende<br>tem <em>os mesmos 4 blocos.</em></h1>
+        </header>
+
+        <div class="corpo">
+          <div class="blocos blocos--preenche">
+
+            <div class="bloco">
+              <span class="bloco__n">01</span>
+              <div>
+                <p class="bloco__h">Promessa clara na primeira tela</p>
+                <p class="bloco__p">O visitante decide em <b>5 segundos</b> se continua. Diga o que você resolve, para quem, e o que ele ganha.</p>
+              </div>
+            </div>
+
+            <div class="bloco">
+              <span class="bloco__n">02</span>
+              <div>
+                <p class="bloco__h">Prova que sustenta a promessa</p>
+                <p class="bloco__p">Casos reais, números medidos, clientes com nome. <b>Adjetivo não convence ninguém</b>, evidência sim.</p>
+              </div>
+            </div>
+
+            <div class="bloco">
+              <span class="bloco__n">03</span>
+              <div>
+                <p class="bloco__h">Uma única ação, repetida</p>
+                <p class="bloco__p">Um botão, sempre o mesmo, sempre visível. <b>Cada opção extra derruba a conversão.</b></p>
+              </div>
+            </div>
+
+            <div class="bloco">
+              <span class="bloco__n">04</span>
+              <div>
+                <p class="bloco__h">Velocidade e mobile de verdade</p>
+                <p class="bloco__p">Passou de 3 segundos para carregar e <b>metade das visitas vai embora</b> antes da primeira linha.</p>
+              </div>
+            </div>
+
+          </div>
+
+          <p class="arraste">
+            Arraste
+            <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+          </p>
+        </div>
+
+        <footer class="rodape">
+          <span class="brand">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M18,44 L34,24 L50,44" fill="none" stroke="url(#grad-slide)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect class="brand-mark-edge" x="10" y="36" width="16" height="16" rx="4" stroke="url(#grad-slide)" stroke-width="2.5"/>
+              <rect x="26" y="16" width="16" height="16" rx="4" fill="url(#grad-slide)"/>
+              <rect class="brand-mark-edge" x="42" y="36" width="16" height="16" rx="4" stroke="url(#grad-slide)" stroke-width="2.5"/>
+              <circle class="brand-mark-dot" cx="42" cy="18" r="3"/>
+            </svg>
+            <span class="brand__w">
+              <span class="brand__r">Rory</span>
+              <span class="brand__s">SYSTEMS</span>
+            </span>
+          </span>
+          <p class="rodape__site">rorysystems.com<b>Blumenau, SC</b></p>
+        </footer>
+
+      </article>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       SLIDE 4 — como a Rory Systems faz, com os números da casa
+       ====================================================================== -->
+  <section class="peca">
+    <p class="peca__rotulo"><b>Slide 4</b> como fazemos
+      <button type="button" data-baixar="slide-4">Baixar PNG</button>
+    </p>
+    <div class="palco">
+      <article class="slide" id="slide-4">
+
+        <header class="faixa">
+          <svg class="faixa__marca" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M18,44 L34,24 L50,44"/>
+            <rect x="10" y="36" width="16" height="16" rx="4"/>
+            <rect x="26" y="16" width="16" height="16" rx="4"/>
+            <rect x="42" y="36" width="16" height="16" rx="4"/>
+          </svg>
+          <p class="eyebrow">Como fazemos</p>
+          <h1 class="titulo titulo--menor">Código sob medida,<br>sem <em>bundle de 300 KB</em><br>para exibir texto.</h1>
+        </header>
+
+        <div class="corpo">
+          <p class="lede">
+            Quem vende performance não pode entregar página pesada. Nossas
+            landing pages são <b>HTML, CSS e JavaScript próprios</b>: carregam
+            na hora, sobem bem no Google e existem para gerar contato.
+          </p>
+
+          <div class="numeros">
+            <div class="numero">
+              <p class="numero__n">99<span>%</span></p>
+              <p class="numero__t">de SLA sustentado</p>
+              <p class="numero__d">Nos sistemas críticos que mantemos.</p>
+            </div>
+            <div class="numero">
+              <p class="numero__n"><span>−</span>90<span>%</span></p>
+              <p class="numero__t">de retorno pós-entrega</p>
+              <p class="numero__d">Documentar antes de codar virou processo.</p>
+            </div>
+            <div class="numero">
+              <p class="numero__n">20</p>
+              <p class="numero__t">anos de tecnologia</p>
+              <p class="numero__d">Do legado à IA, em todas as frentes.</p>
+            </div>
+          </div>
+
+          <div class="blocos" style="margin-top:42px">
+            <div class="bloco">
+              <span class="bloco__n">→</span>
+              <div>
+                <p class="bloco__h">SEO técnico, medição e contato direto</p>
+                <p class="bloco__p">Dados estruturados, Open Graph e sitemap. O formulário chega no seu e-mail e no WhatsApp, e <b>você vê quantos contatos a página gerou.</b></p>
+              </div>
+            </div>
+          </div>
+
+          <p class="arraste">
+            Arraste
+            <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+          </p>
+        </div>
+
+        <footer class="rodape">
+          <span class="brand">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M18,44 L34,24 L50,44" fill="none" stroke="url(#grad-slide)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect class="brand-mark-edge" x="10" y="36" width="16" height="16" rx="4" stroke="url(#grad-slide)" stroke-width="2.5"/>
+              <rect x="26" y="16" width="16" height="16" rx="4" fill="url(#grad-slide)"/>
+              <rect class="brand-mark-edge" x="42" y="36" width="16" height="16" rx="4" stroke="url(#grad-slide)" stroke-width="2.5"/>
+              <circle class="brand-mark-dot" cx="42" cy="18" r="3"/>
+            </svg>
+            <span class="brand__w">
+              <span class="brand__r">Rory</span>
+              <span class="brand__s">SYSTEMS</span>
+            </span>
+          </span>
+          <p class="rodape__site">rorysystems.com<b>Blumenau, SC</b></p>
+        </footer>
+
+      </article>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       SLIDE 5 — chamada final
+       ====================================================================== -->
+  <section class="peca">
+    <p class="peca__rotulo"><b>Slide 5</b> chamada final
+      <button type="button" data-baixar="slide-5">Baixar PNG</button>
+    </p>
+    <div class="palco">
+      <article class="slide" id="slide-5">
+
+        <header class="faixa">
+          <svg class="faixa__marca" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M18,44 L34,24 L50,44"/>
+            <rect x="10" y="36" width="16" height="16" rx="4"/>
+            <rect x="26" y="16" width="16" height="16" rx="4"/>
+            <rect x="42" y="36" width="16" height="16" rx="4"/>
+          </svg>
+          <p class="eyebrow">Diagnóstico gratuito</p>
+          <h1 class="titulo">Sua página está vendendo<br><em>ou só existindo?</em></h1>
+        </header>
+
+        <div class="corpo">
+          <p class="lede">
+            Mande o endereço do seu site. Devolvemos <b>uma análise honesta</b>
+            de velocidade, primeira tela, caminho até o contato e presença no
+            Google. Sem custo e sem compromisso.
+          </p>
+
+          <ul class="entrega">
+            <li>
+              <svg viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5"/></svg>
+              <span><b>Velocidade real</b> no celular, e o que está pesando.</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5"/></svg>
+              <span><b>Primeira tela</b>: o que o visitante entende em 5 segundos.</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5"/></svg>
+              <span><b>Caminho até o contato</b>, e onde ele se perde.</span>
+            </li>
+          </ul>
+
+          <div style="margin-top:46px">
+            <span class="cta">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.2 1.3-1.9 1.4-.5.1-1.2.1-3.7-.9-3.1-1.3-5.1-4.5-5.3-4.7-.1-.2-1.2-1.6-1.2-3.1S6.5 6.7 6.8 6.4c.2-.3.5-.4.7-.4h.5c.2 0 .4 0 .6.5l.8 2c.1.2 0 .4-.1.5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.2 1.5 1.9 1 .9 1.8 1.2 2.1 1.3.2.1.4.1.6-.1l.7-.8c.2-.2.4-.1.6 0l1.9.9c.2.1.4.2.4.3.1.2.1.7-.1 1.4z"/></svg>
+              Solicite seu diagnóstico gratuito
+            </span>
+          </div>
+
+          <div class="contatos">
+            <p class="contato">
+              <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM4 6l8 6 8-6"/></svg>
+              <b>comercial@rorysystems.com</b>
+            </p>
+            <p class="contato">
+              <svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/></svg>
+              <b>(47) 99268-1391</b>
+            </p>
+            <p class="contato">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/></svg>
+              <b>www.rorysystems.com</b>
+            </p>
+          </div>
+        </div>
+
+        <footer class="rodape">
+          <span class="brand">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M18,44 L34,24 L50,44" fill="none" stroke="url(#grad-slide)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect class="brand-mark-edge" x="10" y="36" width="16" height="16" rx="4" stroke="url(#grad-slide)" stroke-width="2.5"/>
+              <rect x="26" y="16" width="16" height="16" rx="4" fill="url(#grad-slide)"/>
+              <rect class="brand-mark-edge" x="42" y="36" width="16" height="16" rx="4" stroke="url(#grad-slide)" stroke-width="2.5"/>
+              <circle class="brand-mark-dot" cx="42" cy="18" r="3"/>
+            </svg>
+            <span class="brand__w">
+              <span class="brand__r">Rory</span>
+              <span class="brand__s">SYSTEMS</span>
+            </span>
+          </span>
+          <p class="rodape__site">rorysystems.com<b>Blumenau, SC</b></p>
+        </footer>
+
+      </article>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* Reduz cada slide de 1080px para a largura do palco. Fica só na tela: a
+   exportação em PNG usa o tamanho real. */
+function ajustarEscala(){
+  document.querySelectorAll('.palco').forEach(function(palco){
+    var slide = palco.querySelector('.slide');
+    if(!slide) return;
+    slide.style.transform = 'scale(' + (palco.clientWidth / 1080) + ')';
+  });
+}
+ajustarEscala();
+window.addEventListener('resize', ajustarEscala);
+if(document.fonts && document.fonts.ready){ document.fonts.ready.then(ajustarEscala); }
+
+/* Baixar um slide como PNG sem biblioteca externa: o slide vira um SVG com
+   <foreignObject> e é pintado num canvas de 1080x1350. Serve para conferir
+   rápido; as fontes do Google não atravessam o foreignObject, então o texto
+   sai em fonte de sistema. O arquivo de publicação vem do Playwright. */
+document.querySelectorAll('[data-baixar]').forEach(function(botao){
+  botao.addEventListener('click', function(){
+    var slide = document.getElementById(botao.dataset.baixar);
+    var clone = slide.cloneNode(true);
+    clone.style.transform = 'none';
+
+    var estilos = Array.prototype.map.call(document.styleSheets, function(folha){
+      try{ return Array.prototype.map.call(folha.cssRules, function(r){ return r.cssText; }).join('\n'); }
+      catch(e){ return ''; }
+    }).join('\n');
+
+    var svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350">' +
+      '<foreignObject width="1080" height="1350">' +
+      '<div xmlns="http://www.w3.org/1999/xhtml"><style>' + estilos + '</style>' +
+      clone.outerHTML + '</div></foreignObject></svg>';
+
+    var img = new Image();
+    img.onload = function(){
+      var canvas = document.createElement('canvas');
+      canvas.width = 1080; canvas.height = 1350;
+      canvas.getContext('2d').drawImage(img, 0, 0);
+      var link = document.createElement('a');
+      link.download = botao.dataset.baixar + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  });
+});
+</script>
+
+</body>
+</html>
