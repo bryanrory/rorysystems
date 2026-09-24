@@ -178,7 +178,7 @@
      correspondente for gravado lá. Para ligar: cole a site key aqui e rode
      `wrangler secret put TURNSTILE_SECRET` nos dois Workers (contato e
      avaliações). A página /avaliar/ usa esta mesma chave. */
-  var TURNSTILE_SITEKEY = '';
+  var TURNSTILE_SITEKEY = '0x4AAAAAAFCpaUCpAB9zwh6l';
 
   /* Monta o widget antes do botão de envio e devolve como ler e renovar o
      token. Com a chave vazia devolve null e o formulário segue sem desafio. */
