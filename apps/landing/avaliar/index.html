@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pt-BR" class="no-js">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+/* Mesmo resolvedor de tema do index.html: escolha salva > sistema > escuro,
+   bloqueante no topo para não piscar. */
+(function(){
+  var root = document.documentElement;
+  var meta = document.querySelector('meta[name="theme-color"]');
+  function aplicar(tema){
+    root.setAttribute('data-theme', tema);
+    if (meta) meta.setAttribute('content', tema === 'light' ? '#FFFFFF' : '#0A0C10');
+  }
+  var salvo = null;
+  try { salvo = localStorage.getItem('rs-theme'); } catch (e) {}
+  if (salvo === 'light' || salvo === 'dark') { aplicar(salvo); }
+  else {
+    var sistemaClaro = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    aplicar(sistemaClaro ? 'light' : 'dark');
+  }
+})();
+</script>
+<title>Avalie a Rory Systems</title>
+<meta name="description" content="Conte como foi trabalhar com a Rory Systems." />
+<!-- Página enviada só para clientes: fora do sitemap, do menu e dos buscadores.
+     Sem Disallow no robots.txt de propósito, que anunciaria o endereço. -->
+<meta name="robots" content="noindex, nofollow" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
+
+<link rel="icon" href="/assets/logo/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" href="/assets/logo/icon.png" />
+<link rel="apple-touch-icon" href="/assets/logo/icon.png" />
+<meta name="theme-color" content="#0A0C10" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <linearGradient id="rs-grad" x1="0" y1="64" x2="64" y2="0">
+      <stop offset="0" stop-color="#2C4A7C"/><stop offset="1" stop-color="#3ED6E0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<header class="bar">
+  <div class="bar__in">
+    <a class="brand" href="/">
+      <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M18,44 L34,24 L50,44" fill="none" stroke="url(#rs-grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect class="brand-mark-edge" x="10" y="36" width="16" height="16" rx="4" stroke="url(#rs-grad)" stroke-width="2.5"/>
+        <rect x="26" y="16" width="16" height="16" rx="4" fill="url(#rs-grad)"/>
+        <rect class="brand-mark-edge" x="42" y="36" width="16" height="16" rx="4" stroke="url(#rs-grad)" stroke-width="2.5"/>
+        <circle class="brand-mark-dot" cx="42" cy="18" r="3"/>
+      </svg>
+      <span class="brand__w"><span class="brand__r">Rory</span><span class="brand__s">SYSTEMS</span></span>
+    </a>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Alternar para tema claro">
+      <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"/></svg>
+      <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="conteudo" class="shell rv-page">
+  <div class="rv-head">
+    <p class="eyebrow">Avaliação</p>
+    <h1 class="section__title">Como foi trabalhar com a gente?</h1>
+    <p class="rv-lead">Leva um minuto. Depois de uma revisão rápida, sua avaliação aparece no site da Rory Systems.</p>
+  </div>
+
+  <p class="rv-nojs">Esta página precisa de JavaScript para enviar a avaliação. Se preferir, mande pelo
+    <a href="https://wa.me/5547992681391" target="_blank" rel="noopener">WhatsApp (47) 99268-1391</a>.</p>
+
+  <form id="review-form" class="rv-form" novalidate>
+    <!-- honeypot: campo invisível para bots. Humano nunca preenche. -->
+    <input type="text" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+    <div class="rv-photo">
+      <div class="rv-photo__img" id="rv-preview" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      </div>
+      <div>
+        <label class="btn btn--ghost btn--sm rv-photo__btn">
+          <input type="file" id="rv-foto" accept="image/*" />
+          <span id="rv-foto-label">Escolher foto</span>
+        </label>
+        <button type="button" class="rv-photo__rm" id="rv-foto-rm" hidden>Remover</button>
+        <p class="rv-hint">Opcional. Sem foto, mostramos suas iniciais.</p>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <label class="field"><span>Nome</span><input type="text" name="nome" required minlength="2" maxlength="80" autocomplete="name" placeholder="Seu nome" /></label>
+      <label class="field"><span>Profissão</span><input type="text" name="profissao" required minlength="2" maxlength="80" autocomplete="organization-title" placeholder="Ex.: Arquiteta, dono de barbearia" /></label>
+    </div>
+
+    <fieldset class="rv-rate">
+      <legend>Sua nota</legend>
+      <div class="rv-stars" id="rv-stars">
+        <label><input type="radio" name="estrelas" value="1" required /><span class="sr">1 estrela</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg></label>
+        <label><input type="radio" name="estrelas" value="2" /><span class="sr">2 estrelas</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg></label>
+        <label><input type="radio" name="estrelas" value="3" /><span class="sr">3 estrelas</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg></label>
+        <label><input type="radio" name="estrelas" value="4" /><span class="sr">4 estrelas</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg></label>
+        <label><input type="radio" name="estrelas" value="5" /><span class="sr">5 estrelas</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg></label>
+      </div>
+    </fieldset>
+
+    <label class="field"><span>Comentário</span>
+      <textarea name="comentario" id="rv-comentario" rows="4" required maxlength="244" placeholder="O que mudou no seu dia a dia depois do projeto?" aria-describedby="rv-count"></textarea>
+    </label>
+    <p class="rv-count" id="rv-count"><span id="rv-count-n">0</span>/244</p>
+
+    <label class="rv-check">
+      <input type="checkbox" name="consentimento" required />
+      <span>Autorizo a Rory Systems a publicar meu nome, profissão, foto e comentário no site.</span>
+    </label>
+
+    <button class="btn btn--primary" type="submit" id="review-submit">Enviar avaliação</button>
+    <p class="form-msg" id="review-msg" role="status" aria-live="polite"></p>
+  </form>
+
+  <div class="rv-done" id="rv-done" hidden tabindex="-1">
+    <h2>Obrigado!</h2>
+    <p>Recebemos sua avaliação. Ela aparece no site assim que for revisada.</p>
+    <a class="btn btn--ghost btn--sm" href="/">Conhecer o site</a>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="shell foot__in">
+    <span>© 2026 Rory Systems · Blumenau, SC</span>
+    <span>rorysystems.com</span>
+  </div>
+</footer>
+
+<script src="/script.js"></script>
+<script src="avaliar.js"></script>
+</body>
+</html>
