@@ -1,0 +1,53 @@
+# Worker das avaliações de clientes. Recebe o envio da página
+# rorysystems.com/avaliar/, guarda no D1 como pendente e manda um e-mail de
+# moderação. Só o que for aprovado pelo link do e-mail aparece na landing.
+#
+# Nada de segredo neste arquivo, ele é versionado. REVIEW_SECRET, SMTP_USER e
+# SMTP_PASS entram por `wrangler secret put` (ver README.md).
+
+name = "rory-reviews"
+main = "src/index.js"
+compatibility_date = "2026-08-04"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+# Hostname próprio: api.rorysystems.com já é custom domain do Worker de
+# contato, e custom domain não divide hostname por caminho.
+[[routes]]
+pattern = "reviews.rorysystems.com"
+custom_domain = true
+
+# database_id sai de `npx wrangler d1 create rory-reviews`.
+[[d1_databases]]
+binding = "DB"
+database_name = "rory-reviews"
+database_id = "PREENCHER_COM_O_ID_DO_D1"
+
+[vars]
+PUBLIC_URL = "https://reviews.rorysystems.com"
+SMTP_HOST = "smtp-relay.brevo.com"
+SMTP_PORT = "587"
+MAIL_FROM = "contato@rorysystems.com"
+MAIL_FROM_NAME = "Rory Systems · avaliações"
+MAIL_TO = "comercial@rorysystems.com"
+ALLOWED_ORIGINS = "https://rorysystems.com,https://www.rorysystems.com"
+
+# --- Rate limiting ---------------------------------------------------------
+# namespace_id é por conta, então não pode repetir os 1001–1003 do Worker de
+# contato. `period` só aceita 10 ou 60 segundos.
+
+# Por IP: um cliente manda uma avaliação; três por minuto já é folga.
+[[unsafe.bindings]]
+name = "RL_IP"
+type = "ratelimit"
+namespace_id = "1004"
+simple = { limit = 3, period = 60 }
+
+# Global: teto do Worker inteiro contra envio distribuído.
+[[unsafe.bindings]]
+name = "RL_GLOBAL"
+type = "ratelimit"
+namespace_id = "1005"
+simple = { limit = 20, period = 60 }
