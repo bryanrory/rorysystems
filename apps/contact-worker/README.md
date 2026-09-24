@@ -21,7 +21,7 @@ antes de chegar na parte cara (rate limit, Turnstile, SMTP):
 | Método e rota | Só `POST` em `/` ou `/contato`; o resto é 404/405 |
 | Origem | Allowlist estrita via `ALLOWED_ORIGINS`; sem match, 403 |
 | Content-Type | Exige `application/json`, o que força o preflight CORS |
-| Tamanho | Corta acima de 16 KB, por `Content-Length` e pelo corpo real |
+| Tamanho | Corta acima de 16 KB, por `Content-Length` e lendo o corpo em stream até o limite |
 | Rate limit global | 60 req/min no Worker inteiro — segura botnet distribuída |
 | Rate limit por IP | 5 req/min — segura o abusador de uma máquina só |
 | Rate limit por e-mail | 3 req/min — impede inundar a caixa trocando de IP |

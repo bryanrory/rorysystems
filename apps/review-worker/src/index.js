@@ -85,6 +85,33 @@ function erro(code, status, origem) {
   return json({ success: false, code }, status, origem);
 }
 
+/* Content-Length pode mentir ou faltar (requisição chunked). Ler em stream e
+   parar no limite evita receber megabytes só para descartar depois. Devolve
+   null quando o corpo passa de `max` bytes. */
+async function lerCorpo(request, max) {
+  if (!request.body) return '';
+  const leitor = request.body.getReader();
+  const partes = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await leitor.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > max) {
+      await leitor.cancel();
+      return null;
+    }
+    partes.push(value);
+  }
+  const bytes = new Uint8Array(total);
+  let pos = 0;
+  for (const p of partes) {
+    bytes.set(p, pos);
+    pos += p.byteLength;
+  }
+  return new TextDecoder().decode(bytes);
+}
+
 async function limiteEstourado(binding, chave) {
   if (!binding) return false;
   try {
@@ -281,8 +308,8 @@ async function criarAvaliacao(request, env, origem) {
   if (await limiteEstourado(env.RL_GLOBAL, 'global')) return erro('RATE_LIMITED', 429, origem);
   if (await limiteEstourado(env.RL_IP, ip || 'desconhecido')) return erro('RATE_LIMITED', 429, origem);
 
-  const bruto = await request.text();
-  if (bruto.length > TAMANHO_MAX) return erro('PAYLOAD_TOO_LARGE', 413, origem);
+  const bruto = await lerCorpo(request, TAMANHO_MAX);
+  if (bruto === null) return erro('PAYLOAD_TOO_LARGE', 413, origem);
 
   let corpo;
   try {

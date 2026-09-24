@@ -68,6 +68,33 @@ function escaparHtml(texto) {
   })[c]);
 }
 
+/* Content-Length pode mentir ou faltar (requisição chunked). Ler em stream e
+   parar no limite evita receber megabytes só para descartar depois. Devolve
+   null quando o corpo passa de `max` bytes. */
+async function lerCorpo(request, max) {
+  if (!request.body) return '';
+  const leitor = request.body.getReader();
+  const partes = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await leitor.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > max) {
+      await leitor.cancel();
+      return null;
+    }
+    partes.push(value);
+  }
+  const bytes = new Uint8Array(total);
+  let pos = 0;
+  for (const p of partes) {
+    bytes.set(p, pos);
+    pos += p.byteLength;
+  }
+  return new TextDecoder().decode(bytes);
+}
+
 /* Rate limit tolerante a binding ausente: se o limitador não estiver
    configurado, o Worker segue funcionando em vez de derrubar todo mundo. */
 async function limiteEstourado(binding, chave) {
@@ -191,10 +218,8 @@ export default {
 
     /* --- camada 3: corpo e conteúdo --------------------------------------- */
 
-    const bruto = await request.text();
-    /* Content-Length pode vir ausente em requisição chunked; o tamanho real
-       é o que vale. */
-    if (bruto.length > TAMANHO_MAX) {
+    const bruto = await lerCorpo(request, TAMANHO_MAX);
+    if (bruto === null) {
       return json({ success: false, message: 'Mensagem grande demais.' }, 413, origem);
     }
 

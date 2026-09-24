@@ -36,6 +36,7 @@ A API responde só códigos (`INVALID_NAME`, `COMMENT_TOO_LONG`,
 |---|---|
 | Origem | Allowlist em `ALLOWED_ORIGINS`; POST sem origem liberada é 403 |
 | Rate limit | 20/min no Worker inteiro, 3/min por IP |
+| Tamanho | Corta acima de 120 KB, por `Content-Length` e lendo o corpo em stream até o limite |
 | Honeypot | Campo invisível preenchido responde 200 sem gravar |
 | Turnstile | Opcional, inerte até gravar `TURNSTILE_SECRET` |
 | Validação | Tamanhos contados em caracteres reais; links no comentário são recusados |
