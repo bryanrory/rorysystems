@@ -213,8 +213,25 @@
   var msg = document.getElementById('form-msg');
   var submitBtn = document.getElementById('contact-submit');
 
+  /* DDD + 8 dígitos (fixo) ou DDD + 9 (celular). Formata enquanto digita:
+     (12) 1234-5678 ou (47) 12345-6789. */
+  function mascaraTelefone(valor) {
+    var d = valor.replace(/\D/g, '').slice(0, 11);
+    if (d.length <= 2) return d.length ? '(' + d : '';
+    var resto = d.slice(2);
+    var corte = d.length === 11 ? 5 : 4;
+    var numero = resto.length > corte ? resto.slice(0, corte) + '-' + resto.slice(corte) : resto;
+    return '(' + d.slice(0, 2) + ') ' + numero;
+  }
+
   if (form) {
     var desafio = window.roryTurnstile(submitBtn);
+
+    if (form.telefone) {
+      form.telefone.addEventListener('input', function () {
+        form.telefone.value = mascaraTelefone(form.telefone.value);
+      });
+    }
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -223,6 +240,14 @@
 
       var dados = {};
       new FormData(form).forEach(function (valor, chave) { dados[chave] = valor; });
+
+      var digitos = String(dados.telefone || '').replace(/\D/g, '');
+      if (digitos && digitos.length !== 10 && digitos.length !== 11) {
+        msg.textContent = 'Informe o WhatsApp com DDD: 10 ou 11 números.';
+        msg.className = 'form-msg is-err';
+        form.telefone.focus();
+        return;
+      }
 
       /* O widget também injeta cf-turnstile-response no form; o Worker lê
          só o campo turnstile. */
