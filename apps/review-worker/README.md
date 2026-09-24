@@ -38,6 +38,7 @@ A API responde só códigos (`INVALID_NAME`, `COMMENT_TOO_LONG`,
 | Rate limit | Envio: 20/min no Worker inteiro, 3/min por IP. Leitura que erra o cache: 60/min por IP |
 | Cache na borda | Lista (5 min) e fotos aprovadas (1 h) na Cache API; o D1 só é lido quando o cache erra |
 | Tamanho | Corta acima de 120 KB, por `Content-Length` e lendo o corpo em stream até o limite |
+| Fila de moderação | Com 50 pendentes, novos envios recebem `REVIEWS_PAUSED` até você moderar |
 | Honeypot | Campo invisível preenchido responde 200 sem gravar |
 | Turnstile | Inerte até gravar `TURNSTILE_SECRET` (ativação em `../contact-worker/README.md`) |
 | Validação | Tamanhos contados em caracteres reais; links no comentário são recusados |

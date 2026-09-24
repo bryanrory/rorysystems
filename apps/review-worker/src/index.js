@@ -18,6 +18,10 @@ const TAMANHO_MAX = 120 * 1024; // foto já chega reduzida a 256px; 120 KB é fo
 const FOTO_MAX = 60 * 1024;
 const LIMITES = { nome: [2, 80], profissao: [2, 80], comentario: [3, 244] };
 const LISTA_MAX = 24;
+/* Teto da fila de moderação. Cada linha pode ter ~80 KB; sem teto, um envio
+   automatizado enche o D1 e a caixa de e-mail em poucas horas. Cliente de
+   verdade nunca chega perto disto. */
+const PENDENTES_MAX = 50;
 const VALIDADE_LINK = 30 * 24 * 60 * 60; // segundos
 const TIPOS_FOTO = ['image/webp', 'image/jpeg', 'image/png'];
 const LISTA_TTL = 300; // segundos, no navegador e na borda
@@ -388,6 +392,13 @@ async function criarAvaliacao(request, env, origem) {
   };
 
   try {
+    const fila = await env.DB.prepare(
+      `SELECT COUNT(*) AS n FROM avaliacoes WHERE status = 'Pendente' AND excluido_em IS NULL`,
+    ).first();
+    if (fila && fila.n >= PENDENTES_MAX) {
+      console.warn('Fila de moderação cheia, envio recusado. Pendentes:', fila.n);
+      return erro('REVIEWS_PAUSED', 503, origem);
+    }
     await env.DB.prepare(
       `INSERT INTO avaliacoes (id, nome, profissao, estrelas, comentario, foto, foto_tipo, status, criado_em, ip)
        VALUES (?, ?, ?, ?, ?, ?, ?, 'Pendente', ?, ?)`,
