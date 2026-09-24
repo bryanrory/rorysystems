@@ -20,6 +20,9 @@ const LIMITES = { nome: [2, 80], profissao: [2, 80], comentario: [3, 244] };
 const LISTA_MAX = 24;
 const VALIDADE_LINK = 30 * 24 * 60 * 60; // segundos
 const TIPOS_FOTO = ['image/webp', 'image/jpeg', 'image/png'];
+const LISTA_TTL = 300; // segundos, no navegador e na borda
+const FOTO_TTL = 86400; // navegador
+const FOTO_TTL_BORDA = 3600; // borda: recusar uma aprovada some do cache em até 1 h
 
 /* --- utilidades ------------------------------------------------------------ */
 
@@ -139,6 +142,37 @@ async function turnstileValido(token, ip, env) {
   } catch (e) {
     console.error('Turnstile indisponível:', e && e.message);
     return false;
+  }
+}
+
+/* --- cache na borda ------------------------------------------------------------ */
+
+/* Custom domain de Worker não passa pelo cache do CDN: o Worker roda em toda
+   requisição, e sem isto cada GET vira uma leitura no D1. A Cache API guarda
+   por datacenter; a chave é a URL sem query string. */
+function chaveCache(env, caminho) {
+  return new Request(new URL(caminho, env.PUBLIC_URL).toString(), { method: 'GET' });
+}
+
+async function doCache(chave) {
+  try {
+    return await caches.default.match(chave);
+  } catch (e) {
+    console.error('Cache indisponível:', e && e.message);
+    return undefined;
+  }
+}
+
+function paraCache(ctx, chave, resposta) {
+  ctx.waitUntil(
+    caches.default.put(chave, resposta).catch((e) => console.error('Falha ao gravar cache:', e && e.message)),
+  );
+}
+
+/* Só limpa o datacenter que atendeu a moderação; nos outros vale o TTL. */
+function tirarDoCache(ctx, env, id) {
+  for (const caminho of ['/avaliacoes', `/avaliacoes/${id}/foto`]) {
+    ctx.waitUntil(caches.default.delete(chaveCache(env, caminho)).catch(() => {}));
   }
 }
 
@@ -369,7 +403,27 @@ async function criarAvaliacao(request, env, origem) {
   return json({ success: true }, 201, origem);
 }
 
-async function listarAvaliacoes(env, origem) {
+function respostaLista(corpo, origem) {
+  return new Response(corpo, {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      ...cabecalhos(origem),
+      'Cache-Control': `public, max-age=${LISTA_TTL}`,
+    },
+  });
+}
+
+async function listarAvaliacoes(env, ctx, origem, ip) {
+  /* A lista é a mesma para todo mundo; o CORS entra por requisição, fora do
+     que fica guardado. */
+  const chave = chaveCache(env, '/avaliacoes');
+  const guardada = await doCache(chave);
+  if (guardada) return respostaLista(await guardada.text(), origem);
+
+  /* Só quem erra o cache chega no D1, e é isso que o limite protege. */
+  if (await limiteEstourado(env.RL_LEITURA, ip || 'desconhecido')) return erro('RATE_LIMITED', 429, origem);
+
   let linhas;
   try {
     const r = await env.DB.prepare(
@@ -396,10 +450,30 @@ async function listarAvaliacoes(env, origem) {
     temFoto: Boolean(l.tem_foto),
     criadoEm: l.criado_em,
   }));
-  return json({ success: true, itens }, 200, origem, { 'Cache-Control': 'public, max-age=300' });
+  const corpo = JSON.stringify({ success: true, itens });
+  paraCache(
+    ctx,
+    chave,
+    new Response(corpo, {
+      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${LISTA_TTL}` },
+    }),
+  );
+  return respostaLista(corpo, origem);
 }
 
-async function servirFoto(url, env, id) {
+async function servirFoto(url, env, ctx, id, ip) {
+  const chave = chaveCache(env, `/avaliacoes/${id}/foto`);
+  const guardada = await doCache(chave);
+  if (guardada) {
+    const r = new Response(guardada.body, guardada);
+    r.headers.set('Cache-Control', `public, max-age=${FOTO_TTL}`);
+    return r;
+  }
+
+  /* ID inexistente nunca entra no cache, então é aqui que um flood de UUIDs
+     aleatórios esbarra. */
+  if (await limiteEstourado(env.RL_LEITURA, ip || 'desconhecido')) return new Response(null, { status: 429 });
+
   const row = await env.DB.prepare(
     `SELECT foto, foto_tipo, status FROM avaliacoes WHERE id = ? AND excluido_em IS NULL AND foto IS NOT NULL`,
   )
@@ -416,13 +490,17 @@ async function servirFoto(url, env, id) {
     }
   }
 
-  return new Response(new Uint8Array(row.foto), {
-    headers: {
-      'Content-Type': row.foto_tipo,
-      'Cache-Control': aprovada ? 'public, max-age=86400' : 'private, no-store',
-      'Cross-Origin-Resource-Policy': 'cross-origin',
-      'X-Content-Type-Options': 'nosniff',
-    },
+  const bytes = new Uint8Array(row.foto);
+  const cabecalhosFoto = (cache) => ({
+    'Content-Type': row.foto_tipo,
+    'Cache-Control': cache,
+    'Cross-Origin-Resource-Policy': 'cross-origin',
+    'X-Content-Type-Options': 'nosniff',
+  });
+  /* Pendente nunca vai para o cache: ela só abre com link assinado. */
+  if (aprovada) paraCache(ctx, chave, new Response(bytes.slice(), { headers: cabecalhosFoto(`public, max-age=${FOTO_TTL_BORDA}`) }));
+  return new Response(bytes, {
+    headers: cabecalhosFoto(aprovada ? `public, max-age=${FOTO_TTL}` : 'private, no-store'),
   });
 }
 
@@ -492,7 +570,7 @@ async function confirmarModeracao(url, env) {
   );
 }
 
-async function aplicarModeracao(request, env) {
+async function aplicarModeracao(request, env, ctx) {
   let form;
   try {
     form = await request.formData();
@@ -511,6 +589,7 @@ async function aplicarModeracao(request, env) {
     .bind(ACOES[acao], new Date().toISOString(), id)
     .run();
   if (!r.meta || r.meta.changes === 0) return pagina('Não encontrada', '<h1>Avaliação não encontrada</h1>', 404);
+  tirarDoCache(ctx, env, id);
 
   return pagina(
     'Pronto',
@@ -523,17 +602,18 @@ async function aplicarModeracao(request, env) {
 /* --- roteamento ------------------------------------------------------------------ */
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const origem = origemLiberada(request.headers.get('Origin'), env);
     const url = new URL(request.url);
     const { pathname } = url;
     const metodo = request.method;
+    const ip = request.headers.get('CF-Connecting-IP') || '';
 
     if (metodo === 'OPTIONS') return new Response(null, { status: 204, headers: cabecalhos(origem) });
 
     try {
       if (pathname === '/avaliacoes') {
-        if (metodo === 'GET') return await listarAvaliacoes(env, origem);
+        if (metodo === 'GET') return await listarAvaliacoes(env, ctx, origem, ip);
         if (metodo === 'POST') return await criarAvaliacao(request, env, origem);
         return erro('METHOD_NOT_ALLOWED', 405, origem);
       }
@@ -541,12 +621,12 @@ export default {
       const foto = /^\/avaliacoes\/([0-9a-f-]{36})\/foto$/.exec(pathname);
       if (foto) {
         if (metodo !== 'GET') return erro('METHOD_NOT_ALLOWED', 405, origem);
-        return await servirFoto(url, env, foto[1]);
+        return await servirFoto(url, env, ctx, foto[1], ip);
       }
 
       if (pathname === '/moderar') {
         if (metodo === 'GET') return await confirmarModeracao(url, env);
-        if (metodo === 'POST') return await aplicarModeracao(request, env);
+        if (metodo === 'POST') return await aplicarModeracao(request, env, ctx);
         return erro('METHOD_NOT_ALLOWED', 405, origem);
       }
 
