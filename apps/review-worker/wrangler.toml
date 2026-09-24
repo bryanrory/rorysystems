@@ -23,7 +23,7 @@ custom_domain = true
 [[d1_databases]]
 binding = "DB"
 database_name = "rory-reviews"
-database_id = "PREENCHER_COM_O_ID_DO_D1"
+database_id = "110e47d1-9582-402b-bd0b-a0c2c2c01974"
 
 [vars]
 PUBLIC_URL = "https://reviews.rorysystems.com"
