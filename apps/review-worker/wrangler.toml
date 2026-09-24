@@ -51,3 +51,11 @@ name = "RL_GLOBAL"
 type = "ratelimit"
 namespace_id = "1005"
 simple = { limit = 20, period = 60 }
+
+# Leitura (GET da lista e das fotos): conta só o que erra o cache e vai ao
+# D1. A landing pede a lista e até 24 fotos, então 60/min por IP é folga.
+[[unsafe.bindings]]
+name = "RL_LEITURA"
+type = "ratelimit"
+namespace_id = "1006"
+simple = { limit = 60, period = 60 }

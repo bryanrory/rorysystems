@@ -173,30 +173,48 @@
      Credencial de SMTP nenhuma chega até aqui. */
   var CONTACT_ENDPOINT = 'https://api.rorysystems.com/contato';
 
-  /* Turnstile (CAPTCHA invisível da Cloudflare) fica desligado enquanto esta
-     chave estiver vazia — o Worker só passa a exigir o token quando o secret
+  /* Turnstile (CAPTCHA da Cloudflare) fica desligado enquanto esta chave
+     estiver vazia. O Worker só passa a exigir o token quando o secret
      correspondente for gravado lá. Para ligar: cole a site key aqui e rode
-     `wrangler secret put TURNSTILE_SECRET`. */
+     `wrangler secret put TURNSTILE_SECRET` nos dois Workers (contato e
+     avaliações). A página /avaliar/ usa esta mesma chave. */
   var TURNSTILE_SITEKEY = '';
 
-  var form = document.getElementById('contact-form');
-  var msg = document.getElementById('form-msg');
-  var submitBtn = document.getElementById('contact-submit');
-
-  if (form) {
-    var caixaTurnstile = null;
-
-    if (TURNSTILE_SITEKEY) {
-      caixaTurnstile = document.createElement('div');
-      caixaTurnstile.className = 'cf-turnstile';
-      caixaTurnstile.setAttribute('data-sitekey', TURNSTILE_SITEKEY);
-      submitBtn.parentNode.insertBefore(caixaTurnstile, submitBtn);
+  /* Monta o widget antes do botão de envio e devolve como ler e renovar o
+     token. Com a chave vazia devolve null e o formulário segue sem desafio. */
+  window.roryTurnstile = function (botao) {
+    if (!TURNSTILE_SITEKEY || !botao) return null;
+    var caixa = document.createElement('div');
+    caixa.className = 'cf-turnstile';
+    caixa.setAttribute('data-sitekey', TURNSTILE_SITEKEY);
+    botao.parentNode.insertBefore(caixa, botao);
+    if (!document.querySelector('script[src^="https://challenges.cloudflare.com/turnstile/"]')) {
       var s = document.createElement('script');
       s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
       s.async = true;
       s.defer = true;
       document.head.appendChild(s);
     }
+    return {
+      token: function () {
+        var campo = caixa.querySelector('[name="cf-turnstile-response"]');
+        return campo ? campo.value : '';
+      },
+      /* O token vale para uma verificação só. Depois de qualquer resposta do
+         servidor, deu certo ou não, o próximo envio precisa de outro. */
+      renovar: function () {
+        if (window.turnstile) window.turnstile.reset(caixa);
+      },
+    };
+  };
+  var TURNSTILE_PENDENTE = 'Aguarde a verificação de segurança terminar e envie de novo.';
+
+  var form = document.getElementById('contact-form');
+  var msg = document.getElementById('form-msg');
+  var submitBtn = document.getElementById('contact-submit');
+
+  if (form) {
+    var desafio = window.roryTurnstile(submitBtn);
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -206,9 +224,16 @@
       var dados = {};
       new FormData(form).forEach(function (valor, chave) { dados[chave] = valor; });
 
-      if (caixaTurnstile) {
-        var campo = caixaTurnstile.querySelector('[name="cf-turnstile-response"]');
-        dados.turnstile = campo ? campo.value : '';
+      /* O widget também injeta cf-turnstile-response no form; o Worker lê
+         só o campo turnstile. */
+      delete dados['cf-turnstile-response'];
+      if (desafio) {
+        dados.turnstile = desafio.token();
+        if (!dados.turnstile) {
+          msg.textContent = TURNSTILE_PENDENTE;
+          msg.className = 'form-msg is-err';
+          return;
+        }
       }
 
       submitBtn.disabled = true;
@@ -226,7 +251,6 @@
         .then(function (res) {
           if (res.ok && res.data.success) {
             form.reset();
-            if (window.turnstile && caixaTurnstile) window.turnstile.reset();
             msg.textContent = 'Mensagem enviada. Respondemos em até 24 horas úteis.';
             msg.className = 'form-msg is-ok';
           } else {
@@ -242,6 +266,7 @@
           msg.className = 'form-msg is-err';
         })
         .finally(function () {
+          if (desafio) desafio.renovar();
           submitBtn.disabled = false;
         });
     });

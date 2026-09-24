@@ -471,6 +471,7 @@ img{ max-width:100%; display:block; }
 .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color: var(--cyan); }
 .hp{ position:absolute !important; left:-9999px !important; width:1px; height:1px; overflow:hidden; }
 
+.cf-turnstile{ margin-bottom: var(--s2); min-height:65px; }
 .form-msg{ margin-top: var(--s2); font-size:.875rem; min-height:1.2em; }
 .form-msg.is-ok{ color: var(--mint); }
 .form-msg.is-err{ color:#E8836B; }

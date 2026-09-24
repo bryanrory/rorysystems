@@ -25,8 +25,10 @@
     INVALID_PHOTO: 'Não conseguimos usar essa foto. Tente outra imagem.',
     PHOTO_TOO_LARGE: 'A foto ficou grande demais. Tente outra imagem.',
     PAYLOAD_TOO_LARGE: 'A foto ficou grande demais. Tente outra imagem.',
+    REVIEWS_PAUSED: 'Estamos com muitas avaliações para revisar. Tente de novo mais tarde ou mande pelo WhatsApp.',
     RATE_LIMITED: 'Muitos envios agora. Aguarde um minuto e tente de novo.',
     CAPTCHA_FAILED: 'Não conseguimos confirmar o envio. Recarregue a página.',
+    CAPTCHA_PENDING: 'Aguarde a verificação de segurança terminar e envie de novo.',
   };
   var MENSAGEM_PADRAO = 'Não conseguimos enviar agora. Tente de novo ou fale com a gente pelo WhatsApp.';
 
@@ -46,6 +48,8 @@
   var concluido = document.getElementById('rv-done');
 
   var fotoDataUrl = '';
+  /* Widget e chave vêm de /script.js, carregado antes desta página. */
+  var desafio = window.roryTurnstile ? window.roryTurnstile(submitBtn) : null;
 
   function mostrarErro(texto) {
     msg.textContent = texto;
@@ -180,6 +184,10 @@
       !dados.estrelas ? 'INVALID_STARS' :
       caracteres(dados.comentario).length < 3 ? 'COMMENT_TOO_SHORT' :
       !dados.consentimento ? 'CONSENT_REQUIRED' : null;
+    if (!codigo && desafio) {
+      dados.turnstile = desafio.token();
+      if (!dados.turnstile) codigo = 'CAPTCHA_PENDING';
+    }
     if (codigo) return mostrarErro(MENSAGENS[codigo]);
 
     submitBtn.disabled = true;
@@ -204,6 +212,7 @@
         mostrarErro(MENSAGENS[erro && erro.message] || MENSAGEM_PADRAO);
       })
       .finally(function () {
+        if (desafio) desafio.renovar();
         submitBtn.disabled = false;
       });
   });
