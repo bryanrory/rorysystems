@@ -26,9 +26,9 @@ Sediada em Blumenau, SC. Atendimento remoto para todo o Brasil.
 ## Este repositório
 
 Guarda os produtos digitais da Rory Systems, organizados como um monorepo em
-`apps/`. Hoje existem a landing page e o Worker que atende seu formulário
-de contato; a estrutura já está pronta para receber outros projetos do
-mesmo domínio. O próximo é um app de gestão dos próprios projetos da
+`apps/`. Hoje existem a landing page, o Worker que atende seu formulário
+de contato e o Worker das avaliações de clientes; a estrutura já está
+pronta para receber outros projetos do mesmo domínio. O próximo é um app de gestão dos próprios projetos da
 empresa.
 
 ```
@@ -38,7 +38,8 @@ apps/
 │   ├── style.css
 │   ├── script.js
 │   └── assets/
-└── contact-worker/     → envio do formulário (Cloudflare Worker + SMTP Brevo)
+├── contact-worker/     → envio do formulário (Cloudflare Worker + SMTP Brevo)
+└── review-worker/      → avaliações de clientes (Cloudflare Worker + D1)
 ```
 
 ## A landing page

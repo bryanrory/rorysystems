@@ -82,6 +82,90 @@
     alvos.forEach(function (el) { el.classList.add('is-in'); });
   }
 
+  /* ---- avaliações -------------------------------------------------------- */
+  /* Busca as avaliações aprovadas no Worker apps/review-worker e monta os
+     cards. Dado de cliente entra só por textContent, nunca como HTML. Sem
+     avaliação ou com falha de rede, a seção continua escondida. */
+  var secaoAvaliacoes = document.getElementById('avaliacoes');
+  var listaAvaliacoes = document.getElementById('reviews-list');
+
+  if (secaoAvaliacoes && listaAvaliacoes && window.fetch) {
+    var REVIEWS_API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+      ? 'http://localhost:8787'
+      : 'https://reviews.rorysystems.com';
+    var SVG_NS = 'http://www.w3.org/2000/svg';
+
+    var el = function (tag, classe, texto) {
+      var n = document.createElement(tag);
+      if (classe) n.className = classe;
+      if (texto != null) n.textContent = texto;
+      return n;
+    };
+
+    var iniciais = function (nome) {
+      var partes = nome.trim().split(/\s+/);
+      var primeira = Array.from(partes[0] || '')[0] || '';
+      var ultima = partes.length > 1 ? Array.from(partes[partes.length - 1])[0] : '';
+      return (primeira + ultima).toUpperCase();
+    };
+
+    var estrelasDe = function (nota) {
+      var box = el('div', 'review__stars');
+      box.setAttribute('role', 'img');
+      box.setAttribute('aria-label', nota + ' de 5 estrelas');
+      for (var i = 1; i <= 5; i++) {
+        var svg = document.createElementNS(SVG_NS, 'svg');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('aria-hidden', 'true');
+        if (i <= nota) svg.setAttribute('class', 'is-on');
+        var path = document.createElementNS(SVG_NS, 'path');
+        path.setAttribute('d', 'M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z');
+        svg.appendChild(path);
+        box.appendChild(svg);
+      }
+      return box;
+    };
+
+    var cardDe = function (av) {
+      var card = el('figure', 'review');
+      card.appendChild(estrelasDe(av.estrelas));
+      card.appendChild(el('blockquote', 'review__q', av.comentario));
+
+      var quem = el('figcaption', 'review__who');
+      var avatar = el('span', 'review__av');
+      avatar.setAttribute('aria-hidden', 'true');
+      if (av.temFoto) {
+        var img = el('img');
+        img.src = REVIEWS_API + '/avaliacoes/' + encodeURIComponent(av.id) + '/foto';
+        img.alt = '';
+        img.loading = 'lazy';
+        img.width = 44;
+        img.height = 44;
+        img.addEventListener('error', function () { avatar.textContent = iniciais(av.nome); });
+        avatar.appendChild(img);
+      } else {
+        avatar.textContent = iniciais(av.nome);
+      }
+      var nomes = el('span');
+      nomes.appendChild(el('span', 'review__n', av.nome));
+      nomes.appendChild(el('span', 'review__p', av.profissao));
+      quem.appendChild(avatar);
+      quem.appendChild(nomes);
+      card.appendChild(quem);
+      return card;
+    };
+
+    fetch(REVIEWS_API + '/avaliacoes', { headers: { Accept: 'application/json' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        var itens = data && data.success && Array.isArray(data.itens) ? data.itens : [];
+        if (!itens.length) return;
+        itens.forEach(function (av) { listaAvaliacoes.appendChild(cardDe(av)); });
+        secaoAvaliacoes.hidden = false;
+      })
+      .catch(function () { /* seção fica escondida */ });
+  }
+
   /* ---- formulário de contato ---------------------------------------------- */
   /* O envio passa por um Worker na Cloudflare (apps/contact-worker), que fala
      com o SMTP da Brevo. A URL abaixo é pública de propósito: quem protege o

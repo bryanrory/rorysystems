@@ -1,0 +1,9 @@
+# Copie para .dev.vars (ignorado pelo git) para rodar `wrangler dev` local.
+# Em produção estes valores entram como secret na Cloudflare, não aqui:
+#   wrangler secret put REVIEW_SECRET
+#   wrangler secret put SMTP_USER
+#   wrangler secret put SMTP_PASS
+# SMTP vazio é aceito: a avaliação é gravada e o e-mail só vira log.
+REVIEW_SECRET="troque-por-openssl-rand-hex-32"
+SMTP_USER=""
+SMTP_PASS=""
