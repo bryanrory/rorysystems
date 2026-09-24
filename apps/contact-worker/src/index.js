@@ -261,6 +261,11 @@ export default {
     if (!emailValido(dados.email)) {
       return json({ success: false, message: 'E-mail inválido.' }, 400, origem);
     }
+    /* WhatsApp é opcional; preenchido, precisa ser DDD + 8 ou 9 dígitos. */
+    const digitosTelefone = dados.telefone.replace(/\D/g, '');
+    if (dados.telefone && digitosTelefone.length !== 10 && digitosTelefone.length !== 11) {
+      return json({ success: false, message: 'WhatsApp inválido. Informe DDD e número, com 10 ou 11 dígitos.' }, 400, origem);
+    }
     if (dados.mensagem.length < 10) {
       return json({ success: false, message: 'Conte um pouco mais sobre o que precisa.' }, 400, origem);
     }
