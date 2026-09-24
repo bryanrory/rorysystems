@@ -61,16 +61,27 @@ Como `rorysystems.com` já está na Cloudflare, o `custom_domain` do
 `wrangler.toml` faz o próprio deploy criar o registro DNS de
 `api.rorysystems.com`. Não precisa mexer no painel.
 
-## Ligar o Turnstile (opcional)
+## Ligar o Turnstile
 
-O código já está pronto nos dois lados e fica inerte enquanto não for
-configurado. Para ativar:
+O código já está pronto nos dois Workers (contato e avaliações) e nos dois
+formulários, e fica inerte enquanto não for configurado. A ordem importa: se
+o secret entrar antes de a landing publicada mandar o token, os dois
+formulários passam a recusar todo envio.
 
-1. Painel Cloudflare → Turnstile → Add widget, domínio `rorysystems.com`.
-2. Cole a **site key** em `TURNSTILE_SITEKEY`, em `apps/landing/script.js`.
-3. `npx wrangler secret put TURNSTILE_SECRET` com a **secret key**.
+1. Painel Cloudflare → Turnstile → Add widget. Hostnames `rorysystems.com`
+   e `www.rorysystems.com`, modo Managed.
+2. Cole a **site key** em `TURNSTILE_SITEKEY`, em `apps/landing/script.js`
+   (a página `/avaliar/` usa a mesma chave). Publique a landing e confira
+   que o widget aparece nos dois formulários.
+3. Grave a **secret key** nos dois Workers:
 
-A partir daí o Worker rejeita qualquer envio sem token válido.
+   ```bash
+   cd apps/contact-worker && npx wrangler secret put TURNSTILE_SECRET
+   cd ../review-worker    && npx wrangler secret put TURNSTILE_SECRET
+   ```
+
+A partir daí cada Worker rejeita qualquer envio sem token válido. Para
+desligar numa emergência: `npx wrangler secret delete TURNSTILE_SECRET`.
 
 ## Configuração não secreta
 

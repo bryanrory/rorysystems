@@ -38,7 +38,7 @@ A API responde só códigos (`INVALID_NAME`, `COMMENT_TOO_LONG`,
 | Rate limit | 20/min no Worker inteiro, 3/min por IP |
 | Tamanho | Corta acima de 120 KB, por `Content-Length` e lendo o corpo em stream até o limite |
 | Honeypot | Campo invisível preenchido responde 200 sem gravar |
-| Turnstile | Opcional, inerte até gravar `TURNSTILE_SECRET` |
+| Turnstile | Inerte até gravar `TURNSTILE_SECRET` (ativação em `../contact-worker/README.md`) |
 | Validação | Tamanhos contados em caracteres reais; links no comentário são recusados |
 | Foto | Só WebP/JPEG/PNG até 60 KB, com os bytes conferidos contra o tipo |
 | Links de moderação | HMAC-SHA256 com `REVIEW_SECRET`, validade de 30 dias |
