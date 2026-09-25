@@ -27,6 +27,16 @@
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
+  /* Consent Mode avançado, aprovado por padrão: só nega se o visitante
+     recusou no aviso de cookies (escolha em rs-consent, ver script.js). */
+  var consentimento = null;
+  try { consentimento = localStorage.getItem('rs-consent'); } catch (e) {}
+  gtag('consent', 'default', {
+    analytics_storage: consentimento === 'denied' ? 'denied' : 'granted',
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied'
+  });
   gtag('js', new Date());
 
   gtag('config', 'G-YHDV79T6ZQ');

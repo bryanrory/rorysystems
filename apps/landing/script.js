@@ -61,6 +61,73 @@
     });
   }
 
+  /* ---- aviso de cookies ---------------------------------------------------- */
+  /* O Analytics já nasce aprovado (ver o Consent Mode no <head>). O aviso só
+     informa e dá a opção de recusar; a escolha fica em rs-consent e o link
+     "Cookies" no rodapé reabre o aviso para mudar de ideia. */
+  var CHAVE_CONSENTIMENTO = 'rs-consent';
+
+  function lerConsentimento() {
+    try { return localStorage.getItem(CHAVE_CONSENTIMENTO); } catch (e) { return null; }
+  }
+
+  function apagarCookiesAnalytics() {
+    /* Recusar não apaga os cookies que o gtag já gravou; remove _ga e _ga_*
+       no domínio atual e no domínio pai, onde o GA costuma gravá-los. */
+    var dominio = location.hostname.replace(/^www\./, '');
+    document.cookie.split(';').forEach(function (c) {
+      var nome = c.split('=')[0].trim();
+      if (nome !== '_ga' && nome.indexOf('_ga_') !== 0) return;
+      var expira = nome + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+      document.cookie = expira;
+      document.cookie = expira + '; domain=.' + dominio;
+    });
+  }
+
+  function registrarConsentimento(valor) {
+    try { localStorage.setItem(CHAVE_CONSENTIMENTO, valor); } catch (e) {}
+    if (typeof window.gtag === 'function') {
+      window.gtag('consent', 'update', { analytics_storage: valor });
+    }
+    if (valor === 'denied') apagarCookiesAnalytics();
+  }
+
+  var aviso = document.createElement('div');
+  aviso.className = 'cookies';
+  aviso.setAttribute('role', 'region');
+  aviso.setAttribute('aria-label', 'Aviso de cookies');
+  aviso.hidden = true;
+  aviso.innerHTML =
+    '<p class="cookies__txt">Usamos cookies do Google Analytics para entender como o site é usado. ' +
+    'Nenhum dado é usado para anúncios.</p>' +
+    '<div class="cookies__acoes">' +
+      '<button type="button" class="btn btn--ghost btn--sm" data-consent="denied">Recusar</button>' +
+      '<button type="button" class="btn btn--primary btn--sm" data-consent="granted">Ok</button>' +
+    '</div>';
+  document.body.appendChild(aviso);
+
+  aviso.querySelectorAll('[data-consent]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      registrarConsentimento(b.getAttribute('data-consent'));
+      aviso.hidden = true;
+    });
+  });
+
+  if (!lerConsentimento()) aviso.hidden = false;
+
+  var rodape = document.querySelector('.foot__in');
+  if (rodape) {
+    var linkCookies = document.createElement('button');
+    linkCookies.type = 'button';
+    linkCookies.className = 'foot__link';
+    linkCookies.textContent = 'Cookies';
+    linkCookies.addEventListener('click', function () {
+      aviso.hidden = false;
+      aviso.querySelector('[data-consent="' + (lerConsentimento() || 'granted') + '"]').focus();
+    });
+    rodape.appendChild(linkCookies);
+  }
+
   /* ---- revelação em scroll ------------------------------------------------ */
   var reduzido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var alvos = document.querySelectorAll('.reveal');
