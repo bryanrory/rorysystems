@@ -561,6 +561,21 @@ a.chan:hover b{ color: var(--cyan); }
 
 .foot{ border-top:1px solid var(--border); padding-block: var(--s4); }
 .foot__in{ display:flex; flex-wrap:wrap; gap: var(--s3); justify-content:space-between; align-items:center; font-family: var(--font-mono); font-size:.75rem; color: var(--ink-faint); }
+.foot__link{ font: inherit; color: inherit; background:none; border:0; padding:0; cursor:pointer; text-decoration: underline; text-underline-offset:3px; }
+.foot__link:hover{ color: var(--cyan); }
+
+/* --- aviso de cookies ---------------------------------------------------------------- */
+
+.cookies{
+  position:fixed; z-index:60; left: var(--gutter); right: var(--gutter); bottom: var(--s3);
+  max-width: 34rem; margin-inline:auto;
+  display:flex; flex-wrap:wrap; gap: var(--s2) var(--s3); align-items:center; justify-content:space-between;
+  padding: var(--s2) var(--s3); border:1px solid var(--border-strong); border-radius:12px;
+  background: var(--bg-plate); box-shadow: 0 12px 40px -12px rgba(0,0,0,.45);
+}
+.cookies[hidden]{ display:none; }
+.cookies__txt{ flex:1 1 16rem; margin:0; font-size:.8125rem; color: var(--ink-dim); }
+.cookies__acoes{ display:flex; gap: var(--s1); }
 
 /* --- scroll reveal ------------------------------------------------------------------ */
 /* Fade + 12px de deslocamento, 350ms, power1.out — o padrão "subtle" para
