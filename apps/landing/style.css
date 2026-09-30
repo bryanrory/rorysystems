@@ -563,6 +563,8 @@ a.chan:hover b{ color: var(--cyan); }
 .foot__in{ display:flex; flex-wrap:wrap; gap: var(--s3); justify-content:space-between; align-items:center; font-family: var(--font-mono); font-size:.75rem; color: var(--ink-faint); }
 .foot__link{ font: inherit; color: inherit; background:none; border:0; padding:0; cursor:pointer; text-decoration: underline; text-underline-offset:3px; }
 .foot__link:hover{ color: var(--cyan); }
+/* "CNPJ" e o número quebram juntos, nunca separados. */
+.foot__nw{ white-space:nowrap; }
 
 /* --- aviso de cookies ---------------------------------------------------------------- */
 
